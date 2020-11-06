@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 3.16)
 #####################################################
 ## Variables to be set depending on project
 #####################################################
-set (PROJECTNAME "MyAwesomeGame") 
+set (PROJECTNAME "TrickyTractor") 
 
 set (ENABLE_UNITTESTS OFF CACHE BOOL "enable unittests")
 set (ENABLE_STRESSTEST OFF CACHE BOOL "enable stresstest")
@@ -130,6 +130,10 @@ if (ENABLE_UNITTESTS)
 	target_link_libraries(UnitTests gtest_main)
 	target_link_libraries(UnitTests gmock)
 	target_link_libraries(UnitTests JamTemplate)
+	
+	add_custom_command(TARGET UnitTests PRE_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                       ${CMAKE_SOURCE_DIR}/assets/ ${CMAKE_CURRENT_BINARY_DIR}/assets)
 	
 endif()
 
