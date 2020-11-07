@@ -65,7 +65,7 @@ void StateGame::doCreate()
             m_endZone->setRotation(r.rotation);
         }
     }
-    getGame()->setCamOffset(startPosition);
+    getGame()->setCamOffset(startPosition - GP::ScreenSizeInGame() / 2.0f);
 
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
@@ -88,7 +88,9 @@ void StateGame::doInternalUpdate(float const elapsed)
     int32 positionIterations = 2;
     m_world->Step(elapsed, velocityIterations, positionIterations);
 
-    m_endZone->update(elapsed);
+    if (m_endZone) {
+        m_endZone->update(elapsed);
+    }
     doScrolling(elapsed);
 }
 void StateGame::doScrolling(float const elapsed)
@@ -128,6 +130,8 @@ void StateGame::doInternalDraw() const
     m_background->draw(getGame()->getRenderTarget());
     m_tilemap->draw(getGame()->getRenderTarget());
     drawObjects();
-    m_endZone->draw(getGame()->getRenderTarget());
+    if (m_endZone) {
+        m_endZone->draw(getGame()->getRenderTarget());
+    }
     m_overlay->draw(getGame()->getRenderTarget());
 }
