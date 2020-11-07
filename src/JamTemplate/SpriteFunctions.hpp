@@ -12,6 +12,8 @@ sf::Image makeButtonImage(unsigned int w, unsigned int h,
     sf::Color brightColor = sf::Color { 255, 255, 255 });
 }
 
+// sf::Image makeGlowImage(float r);
+
 } // namespace JamTemplate
 
 #endif

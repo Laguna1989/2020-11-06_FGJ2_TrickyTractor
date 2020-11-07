@@ -1,4 +1,5 @@
 ﻿#include "SpriteFunctions.hpp"
+#include "MathHelper.hpp"
 
 namespace JamTemplate {
 
@@ -28,6 +29,27 @@ sf::Image makeButtonImage(
 
     return img;
 }
+
+// sf::Image makeGlowImage(float r)
+//{
+//    unsigned int s = static_cast<unsigned int>(r + 0.5f * 2);
+//    sf::Image img {};
+//    img.create(s, s, sf::Color { 0, 0, 0, 0 });
+//
+//    float c = r / 2;
+//
+//    for (auto i = 0U; i != s; ++i) {
+//        for (auto j = 0U; j != s; ++j) {
+//            auto const dx = i - c;
+//            auto const dy = j - c;
+//
+//            auto const sqr = std::sqrt(dx * dx + dy * dy);
+//            auto const sqrNorm = MathHelper::clamp(sqr / s, 0.0f, 1.0f);
+//
+//            // img.setPixel(i, j, sf::Color {255,255,255, sqrNorm})
+//        }
+//    }
+//}
 
 } // namespace SpriteFunctions
 } // namespace JamTemplate

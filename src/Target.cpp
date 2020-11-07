@@ -12,16 +12,18 @@ void Target::doCreate()
 {
     m_animation = std::make_shared<JamTemplate::SmartAnimation>();
 
-    m_animation->add("assets/coin.png", "idle", sf::Vector2u { 16, 16 },
+    /*m_animation->add("assets/coin.png", "idle", sf::Vector2u { 16, 16 },
         JamTemplate::MathHelper::vectorBetween(0U, 11U),
-        JamTemplate::Random::getFloat(0.13f, 0.17f));
-    m_animation->play("idle", JamTemplate::Random::getInt(0, 6));
-    // m_animation->setOffset(sf::Vector2f { -8, -8 });
-    m_animation->setOrigin(sf::Vector2f { 8, 8 });
+        JamTemplate::Random::getFloat(0.13f, 0.17f));*/
 
+    m_animation->add("assets/legonit.png", "idle", sf::Vector2u { 24, 24 },
+        JamTemplate::MathHelper::vectorBetween(0U, 0U), 0.1f);
+    m_animation->play("idle", 0);
+    m_animation->setOrigin(sf::Vector2f { 12, 12 });
+    m_animation->setScale(sf::Vector2f { 0.5f, 0.5f });
     // create bounding box
     b2PolygonShape dynamicBox;
-    dynamicBox.SetAsBox(8, 8);
+    dynamicBox.SetAsBox(6, 6);
 
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &dynamicBox;
