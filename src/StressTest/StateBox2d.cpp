@@ -7,8 +7,6 @@ void StateBox2d::doInternalUpdate(float const elapsed)
     int32 velocityIterations = 6;
     int32 positionIterations = 2;
 
-    updateObjects(elapsed);
-
     m_bar1->update(elapsed);
     m_bar2->update(elapsed);
     for (int32 i = 0; i < 60; ++i) {

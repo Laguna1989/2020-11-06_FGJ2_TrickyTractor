@@ -6,15 +6,6 @@
 #include "JamTemplate/SmartSprite.hpp"
 #include "JamTemplate/TweenAlpha.hpp"
 
-void StateGame::doInternalUpdate(float const elapsed) { m_overlay->update(elapsed); }
-
-void StateGame::doInternalDraw() const
-{
-    m_background->draw(getGame()->getRenderTarget());
-    drawObjects();
-    m_overlay->draw(getGame()->getRenderTarget());
-}
-
 void StateGame::doCreate()
 {
     float w = static_cast<float>(getGame()->getRenderTarget()->getSize().x);
@@ -39,6 +30,30 @@ void StateGame::doCreate()
 
     doCreateInternal();
     add(m_hud);
+
+    m_world = std::make_shared<b2World>(b2Vec2 { 0, GP::Gravity() });
+
+    b2BodyDef bodyDef;
+    bodyDef.type = b2_dynamicBody;
+    bodyDef.position = b2Vec2 { 100.0f, 100.0f };
+    m_target = std::make_shared<Target>(m_world, &bodyDef);
+    add(m_target);
 }
 
 void StateGame::doCreateInternal() { }
+
+void StateGame::doInternalUpdate(float const elapsed)
+{
+    m_overlay->update(elapsed);
+
+    int32 velocityIterations = 6;
+    int32 positionIterations = 2;
+    m_world->Step(elapsed, velocityIterations, positionIterations);
+}
+
+void StateGame::doInternalDraw() const
+{
+    m_background->draw(getGame()->getRenderTarget());
+    drawObjects();
+    m_overlay->draw(getGame()->getRenderTarget());
+}
