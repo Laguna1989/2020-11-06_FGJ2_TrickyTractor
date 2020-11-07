@@ -26,6 +26,7 @@ private:
 
     std::vector<std::shared_ptr<SmartText>> m_levelNames;
     int m_currentLevel;
+    float m_inputDeadTimer;
 
     bool m_starting { false };
 

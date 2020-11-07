@@ -30,7 +30,7 @@ void StateMenu::doCreate()
     m_text_Title->setText(GP::GameName());
     m_text_Title->SetTextAlign(JamTemplate::SmartText::TextAlign::CENTER);
     m_text_Title->setPosition({ wC, 5 });
-    m_text_Title->setColor(GP::PaletteColor3());
+    m_text_Title->setColor(GP::PaletteColor1());
     m_text_Title->update(0.0f);
     m_text_Title->setShadow(GP::PaletteFontShadow(), sf::Vector2f { 3, 3 });
 
@@ -131,11 +131,15 @@ void StateMenu::doCreate()
         }
         m_levelNames.push_back(st);
     }
+
+    m_inputDeadTimer = 0;
 }
 
 void StateMenu::doInternalUpdate(float const elapsed)
 {
     if (!m_starting) {
+        m_inputDeadTimer -= elapsed;
+
         using ip = JamTemplate::InputManager;
         if (ip::justPressed(sf::Keyboard::Key::Space)
             || ip::justPressed(sf::Keyboard::Key::Return)) {
@@ -152,68 +156,77 @@ void StateMenu::doInternalUpdate(float const elapsed)
         m_text_Title->update(elapsed);
         m_test_Explanation->update(elapsed);
 
-        if (JamTemplate::InputManager::justPressed(sf::Keyboard::Down)
-            || JamTemplate::InputManager::justPressed(sf::Keyboard::S)) {
-            m_currentLevel++;
-            float posOffset = 0;
-            if (m_currentLevel >= GP::getLevelList().size()) {
-                m_currentLevel = 0;
-                posOffset = m_levelNames.size() * GP::GetMenuLevelTextDistance();
-            }
+        if (m_inputDeadTimer <= 0) {
+            if (JamTemplate::InputManager::justPressed(sf::Keyboard::Down)
+                || JamTemplate::InputManager::justPressed(sf::Keyboard::S)) {
+                m_currentLevel++;
+                m_inputDeadTimer = GP::MenuInputDeadTime();
+                float posOffset = 0;
+                if (m_currentLevel >= GP::getLevelList().size()) {
+                    m_currentLevel = 0;
+                    posOffset = m_levelNames.size() * GP::GetMenuLevelTextDistance();
+                }
 
-            for (auto i = 0U; i != m_levelNames.size(); ++i) {
-                auto col = GP::PaletteColor4();
-                uint8_t a = static_cast<uint8_t>(JamTemplate::MathHelper::clamp(
-                    255 - static_cast<int>(std::fabs(static_cast<int>(i) - m_currentLevel)) * 200,
-                    0, 255));
+                for (auto i = 0U; i != m_levelNames.size(); ++i) {
+                    auto col = GP::PaletteColor4();
+                    uint8_t a = static_cast<uint8_t>(JamTemplate::MathHelper::clamp(255
+                            - static_cast<int>(std::fabs(static_cast<int>(i) - m_currentLevel))
+                                * 200,
+                        0, 255));
 
-                auto twa = JamTemplate::TweenAlpha<SmartText>::create(
-                    m_levelNames.at(i), 0.25f, m_levelNames.at(i)->getColor().a, a);
-                add(twa);
+                    auto twa = JamTemplate::TweenAlpha<SmartText>::create(
+                        m_levelNames.at(i), 0.25f, m_levelNames.at(i)->getColor().a, a);
+                    add(twa);
 
-                auto twp = JamTemplate::TweenPosition<SmartText>::create(m_levelNames.at(i), 0.25f,
-                    m_levelNames.at(i)->getPosition(),
-                    m_levelNames.at(i)->getPosition()
-                        - sf::Vector2f { 0, GP::GetMenuLevelTextDistance() - posOffset });
-                add(twp);
+                    auto twp = JamTemplate::TweenPosition<SmartText>::create(m_levelNames.at(i),
+                        GP::MenuInputDeadTime(), m_levelNames.at(i)->getPosition(),
+                        m_levelNames.at(i)->getPosition()
+                            - sf::Vector2f { 0, GP::GetMenuLevelTextDistance() - posOffset });
+                    add(twp);
 
-                if (i == m_currentLevel) {
-                    m_levelNames.at(i)->setShadow(GP::PaletteFontShadow(), sf::Vector2f { 1, 1 });
-                } else {
-                    m_levelNames.at(i)->setShadowActive(false);
+                    if (i == m_currentLevel) {
+                        m_levelNames.at(i)->setShadow(
+                            GP::PaletteFontShadow(), sf::Vector2f { 1, 1 });
+                    } else {
+                        m_levelNames.at(i)->setShadowActive(false);
+                    }
                 }
             }
-        }
 
-        if (JamTemplate::InputManager::justPressed(sf::Keyboard::Up)
-            || JamTemplate::InputManager::justPressed(sf::Keyboard::W)) {
-            m_currentLevel--;
-            float posOffset = 0;
-            if (m_currentLevel < 0) {
-                m_currentLevel = GP::getLevelList().size() - 1;
-                posOffset = m_levelNames.size() * GP::GetMenuLevelTextDistance();
-            }
+            if (JamTemplate::InputManager::justPressed(sf::Keyboard::Up)
+                || JamTemplate::InputManager::justPressed(sf::Keyboard::W)) {
+                m_currentLevel--;
+                m_inputDeadTimer = GP::MenuInputDeadTime();
 
-            for (auto i = 0U; i != m_levelNames.size(); ++i) {
-                auto col = GP::PaletteColor4();
-                uint8_t a = static_cast<uint8_t>(JamTemplate::MathHelper::clamp(
-                    255 - static_cast<int>(std::fabs(static_cast<int>(i) - m_currentLevel)) * 200,
-                    0, 255));
+                float posOffset = 0;
+                if (m_currentLevel < 0) {
+                    m_currentLevel = static_cast<int>(GP::getLevelList().size() - 1);
+                    posOffset = m_levelNames.size() * GP::GetMenuLevelTextDistance();
+                }
 
-                auto twa = JamTemplate::TweenAlpha<SmartText>::create(
-                    m_levelNames.at(i), 0.25f, m_levelNames.at(i)->getColor().a, a);
-                add(twa);
+                for (auto i = 0U; i != m_levelNames.size(); ++i) {
+                    auto col = GP::PaletteColor4();
+                    uint8_t a = static_cast<uint8_t>(JamTemplate::MathHelper::clamp(255
+                            - static_cast<int>(std::fabs(static_cast<int>(i) - m_currentLevel))
+                                * 200,
+                        0, 255));
 
-                auto twp = JamTemplate::TweenPosition<SmartText>::create(m_levelNames.at(i), 0.25f,
-                    m_levelNames.at(i)->getPosition(),
-                    m_levelNames.at(i)->getPosition()
-                        + sf::Vector2f { 0, GP::GetMenuLevelTextDistance() - posOffset });
-                add(twp);
+                    auto twa = JamTemplate::TweenAlpha<SmartText>::create(
+                        m_levelNames.at(i), 0.25f, m_levelNames.at(i)->getColor().a, a);
+                    add(twa);
 
-                if (i == m_currentLevel) {
-                    m_levelNames.at(i)->setShadow(GP::PaletteFontShadow(), sf::Vector2f { 1, 1 });
-                } else {
-                    m_levelNames.at(i)->setShadowActive(false);
+                    auto twp = JamTemplate::TweenPosition<SmartText>::create(m_levelNames.at(i),
+                        GP::MenuInputDeadTime(), m_levelNames.at(i)->getPosition(),
+                        m_levelNames.at(i)->getPosition()
+                            + sf::Vector2f { 0, GP::GetMenuLevelTextDistance() - posOffset });
+                    add(twp);
+
+                    if (i == m_currentLevel) {
+                        m_levelNames.at(i)->setShadow(
+                            GP::PaletteFontShadow(), sf::Vector2f { 1, 1 });
+                    } else {
+                        m_levelNames.at(i)->setShadowActive(false);
+                    }
                 }
             }
         }
