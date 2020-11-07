@@ -13,7 +13,7 @@ class GP {
 public:
     GP() = delete;
 
-    static sf::Color PaletteBackground() { return sf::Color { 14, 16, 20 }; }
+    static sf::Color PaletteBackground() { return sf::Color { 20, 35, 58 }; }
     static sf::Color PaletteFontFront() { return sf::Color { 248, 249, 254 }; }
     static sf::Color PaletteFontShadow(sf::Uint8 a = 255) { return sf::Color { 26, 29, 36, a }; }
     static sf::Color PaletteSelector() { return sf::Color { 221, 228, 236 }; }
@@ -47,9 +47,11 @@ public:
     static float TractorBeamStrengthX() { return 180.0f; }
     static float MouseMovementXToBeamConversion() { return 70.0f; }
     static float TargetAirFrictionX() { return 0.992f; }
+
     static sf::Vector2f WindowSizeOutGame() { return sf::Vector2f { 720, 900 }; }
     static float Zoom() { return 3.0f; }
     static sf::Vector2f ScreenSizeInGame() { return WindowSizeOutGame() / Zoom(); }
+    static int TileSizeInPixel() { return 12; }
 
     static float ScrollBoundary() { return 100.0f; }
     static float ScrollSpeedX() { return 45.0f; }

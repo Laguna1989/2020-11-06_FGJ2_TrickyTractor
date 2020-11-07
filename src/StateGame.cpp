@@ -24,6 +24,7 @@ void StateGame::doCreate()
     m_background = std::make_shared<SmartShape>();
     m_background->makeRect({ w, h });
     m_background->setColor(GP::PaletteBackground());
+    m_background->setIgnoreCamMovement(true);
     m_background->update(0.0f);
 
     m_overlay = std::make_shared<SmartShape>();
@@ -85,7 +86,6 @@ void StateGame::doInternalUpdate(float const elapsed)
     if (JamTemplate::InputManager::justReleased(GP::KeyToggleDrawObjectGroups())) {
         m_tilemap->toggleObjectGroupVisibility();
     }
-    m_tilemap->update(elapsed);
 
     int32 velocityIterations = 6;
     int32 positionIterations = 2;
@@ -98,6 +98,11 @@ void StateGame::doInternalUpdate(float const elapsed)
     if (JamTemplate::Collision::BoundingBoxTest(m_endZone, m_target->getTarget())) {
         getGame()->switchState(std::make_shared<StateMenu>());
     }
+    m_tilemap->update(elapsed);
+
+    // m_background->setPosition(getGame()->getCamOffset());
+    // std::cout << getGame()->getCamOffset().x << " " << getGame()->getCamOffset().y << "\n";
+    m_background->update(elapsed);
 }
 void StateGame::doScrolling(float const elapsed)
 {
@@ -106,8 +111,6 @@ void StateGame::doScrolling(float const elapsed)
     auto const tpw = m_target->getTargetPosition();
     auto const tps = getGame()->getRenderWindow()->mapCoordsToPixel(tpw, *getGame()->getView())
         / static_cast<int>(GP::Zoom());
-
-    // std::cout << tps.x << " " << tps.y << "\n";
 
     auto const mpsc
         = sf::Vector2f { JamTemplate::MathHelper::clamp(mps.x, 0.0f, GP::ScreenSizeInGame().x),
@@ -129,6 +132,25 @@ void StateGame::doScrolling(float const elapsed)
 
         getGame()->moveCam(sf::Vector2f { 0, GP::ScrollSpeedY() } * f * elapsed);
     }
+
+    // limit cam movement to map
+    auto const cpx = getGame()->getCamOffset().x;
+    auto const cpy = getGame()->getCamOffset().y;
+
+    auto const cw = GP::ScreenSizeInGame().x;
+    auto const ch = GP::ScreenSizeInGame().y;
+
+    auto const msxi = m_tilemap->getMapSizeInTiles().x;
+    auto const msyi = m_tilemap->getMapSizeInTiles().y;
+    auto const msx = static_cast<float>(msxi * GP::TileSizeInPixel());
+    auto const msy = static_cast<float>(msyi * GP::TileSizeInPixel());
+
+    auto cpxc = JamTemplate::MathHelper::clamp(cpx, 0.0f, msx - cw);
+    auto cpyc = JamTemplate::MathHelper::clamp(cpy, 0.0f, msy - ch);
+
+    // std::cout << cpx << " " << msx << " " << cpxc << "\n";
+
+    getGame()->setCamOffset(sf::Vector2f { cpxc, cpyc });
 }
 
 void StateGame::doInternalDraw() const
