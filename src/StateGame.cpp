@@ -50,9 +50,18 @@ void StateGame::doCreate()
     }
     add(m_colliders);
 
+    // get start position
+    sf::Vector2f startPosition;
+    auto const other = m_tilemap->getObjectGroups().at(GP::OtherLayerName());
+    if (!other.empty()) {
+        startPosition = other.at(0).position;
+        std::cout << startPosition.x << " " << startPosition.y << "\n";
+    }
+    getGame()->setCamOffset(startPosition);
+
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
-    bodyDef.position = b2Vec2 { 100.0f, 100.0f };
+    bodyDef.position = JamTemplate::C::vec(startPosition);
     m_target = std::make_shared<Target>(m_world, &bodyDef);
     add(m_target);
 }
@@ -93,9 +102,6 @@ void StateGame::doScrolling(float const elapsed)
         getGame()->moveCam(sf::Vector2f { 0, GP::ScrllSpeed() } * elapsed);
     }
 }
-
-// simple camera movement, just follow beam
-// getGame()->setCamOffset(beampos);
 
 void StateGame::doInternalDraw() const
 {

@@ -169,12 +169,12 @@ void Game::doSwitchState()
     m_state = m_nextState;
     m_nextState = nullptr;
 
+    m_CamOffset = sf::Vector2f { 0.0f, 0.0f };
     m_state->setGameInstance(getPtr());
     m_state->create();
 
     JamTemplate::InputManager::reset();
     resetShake();
-    m_CamOffset = sf::Vector2f { 0.0f, 0.0f };
 }
 
 } // namespace JamTemplate

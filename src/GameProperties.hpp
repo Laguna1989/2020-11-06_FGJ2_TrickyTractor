@@ -38,6 +38,7 @@ public:
         return retVal;
     }
     static const std::string ColliderLayerName() { return "Terrain: Kollisionen"; }
+    static const std::string OtherLayerName() { return "Terrain: Start"; }
 
     static float GravityStrength() { return 50.0f; }
     static float TractorBeamWidth() { return 48.0f; }
