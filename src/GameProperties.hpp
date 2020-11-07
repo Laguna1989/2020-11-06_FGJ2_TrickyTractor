@@ -87,6 +87,8 @@ public:
 
     static float GetMenuLevelTextDistance() { return 14; }
     static float MenuInputDeadTime() { return 0.2f; }
+
+    static float BeamColorMaxAlpha() { return 170.0f; }
 };
 
 #endif

@@ -34,9 +34,11 @@ void Target::doCreate()
 
     m_beamPosX = 100;
 
-    m_beamShape = std::make_shared<JamTemplate::SmartShape>();
-    m_beamShape->makeRect(sf::Vector2f { GP::TractorBeamWidth(), GP::ScreenSizeInGame().y });
+    m_beamShape = std::make_shared<JamTemplate::SmartSprite>();
+    // m_beamShape->makeRect(sf::Vector2f { GP::TractorBeamWidth(), GP::ScreenSizeInGame().y });
+    m_beamShape->loadSprite("assets/beam.png");
     m_beamShape->setColor(sf::Color { 255, 255, 255, 0 });
+    m_beamShape->setScale(sf::Vector2f { 1.0f, GP::ScreenSizeInGame().y });
 
     m_beamBorderShape = std::make_shared<JamTemplate::SmartShape>();
     m_beamBorderShape->makeRect(sf::Vector2f { 1, GP::ScreenSizeInGame().y });
@@ -74,10 +76,10 @@ void Target::handleInput(float const elapsed)
     m_beamPosXLast = m_beamPosX;
     m_beamPosX = JamTemplate::InputManager::getMousePositionWorld().x;
 
-    if (JamTemplate::InputManager::pressed(sf::Keyboard::Key::Space)
-        || JamTemplate::InputManager::pressed(sf::Keyboard::Key::W)
-        || JamTemplate::InputManager::pressed(sf::Keyboard::Key::Up)
-        || JamTemplate::InputManager::pressed(sf::Mouse::Left)) {
+    if (JamTemplate::InputManager::justPressed(sf::Mouse::Left)) {
+        m_beamShape->flash(0.85f, sf::Color { 255, 255, 255, 40 });
+    }
+    if (JamTemplate::InputManager::pressed(sf::Mouse::Left)) {
         setBeamStrength(1.0f);
 
         using C = JamTemplate::Collision;
@@ -121,7 +123,10 @@ void Target::doDraw() const
 
 void Target::setBeamStrength(float const v)
 {
-    sf::Uint8 v2 = static_cast<sf::Uint8>(100.0f * JamTemplate::MathHelper::clamp(v, 0.0f, 1.0f));
+    float tval = (0.75f + 0.25f * (1 + std::sin(getAge() / 2.0f)) / 2.0f);
+    // std::cout << tval << std::endl;
+    sf::Uint8 v2 = static_cast<sf::Uint8>(
+        tval * GP::BeamColorMaxAlpha() * JamTemplate::MathHelper::clamp(v, 0.0f, 1.0f));
 
     m_beamShape->setColor(sf::Color { 255, 255, 255, v2 });
 }
