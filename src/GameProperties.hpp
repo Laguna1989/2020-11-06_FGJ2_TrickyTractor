@@ -51,7 +51,7 @@ public:
     static float Zoom() { return 3.0f; }
     static sf::Vector2f ScreenSizeInGame() { return WindowSizeOutGame() / Zoom(); }
 
-    static float ScrollBoundary() { return 60.0f; }
+    static float ScrollBoundary() { return 100.0f; }
     static float ScrollSpeedX() { return 45.0f; }
     static float ScrollSpeedY() { return 70.0f; }
 };
