@@ -11,13 +11,13 @@ using namespace JamTemplate::C;
 void Target::doCreate()
 {
     m_animation = std::make_shared<JamTemplate::SmartAnimation>();
-
-    /*m_animation->add("assets/coin.png", "idle", sf::Vector2u { 16, 16 },
-        JamTemplate::MathHelper::vectorBetween(0U, 11U),
-        JamTemplate::Random::getFloat(0.13f, 0.17f));*/
-
-    m_animation->add("assets/legonit.png", "idle", sf::Vector2u { 24, 24 },
+    m_animation->add("assets/legonit-break.png", "idle", sf::Vector2u { 24, 24 },
         JamTemplate::MathHelper::vectorBetween(0U, 0U), 0.1f);
+
+    for (unsigned int i = 1; i <= GP::MaxCrystalDamage(); ++i) {
+        registerDamageAnimation(i);
+    }
+
     m_animation->play("idle", 0);
     m_animation->setOrigin(sf::Vector2f { 12, 12 });
     m_animation->setScale(sf::Vector2f { 0.5f, 0.5f });
@@ -125,5 +125,23 @@ void Target::setBeamStrength(float const v)
 
     m_beamShape->setColor(sf::Color { 255, 255, 255, v2 });
 }
+
+void Target::registerDamageAnimation(unsigned int damage)
+{
+    std::stringstream animName;
+    animName << "damaged" << damage;
+    m_animation->add("assets/legonit-break.png", animName.str(), sf::Vector2u { 24, 24 },
+        JamTemplate::MathHelper::vectorBetween(damage, damage), 0.1f);
+}
+
+void Target::setDamage(unsigned int currentDamage)
+{
+    m_damage = JamTemplate::MathHelper::clamp(currentDamage, 1U, GP::MaxCrystalDamage());
+    std::stringstream animName;
+    animName << "damaged" << m_damage;
+    m_animation->play(animName.str(), 0);
+}
+
+unsigned int Target::getDamage() { return m_damage; }
 
 sf::Vector2f Target::getTargetPosition() { return m_animation->getPosition(); }

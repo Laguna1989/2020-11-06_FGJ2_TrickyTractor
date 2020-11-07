@@ -38,6 +38,9 @@ private:
     std::shared_ptr<JamTemplate::SmartShape> m_endZone;
 
     int m_levelID;
+    float m_lastCollisionAge = 0.0f;
+    float m_deathAge = -1.0f; // negative == not dead yet
+    bool m_alreadyTweening = false;
 
     void doCreate() override;
 
@@ -47,7 +50,8 @@ private:
     virtual void doInternalDraw() const override;
 
     void doScrolling(float const elapsed);
-    void StateGame::handleDamage(float damage);
+    void handleDamage(float damage);
+    void handleDeath(float const elapsed);
 };
 
 #endif

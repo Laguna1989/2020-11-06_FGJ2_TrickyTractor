@@ -83,6 +83,7 @@ void StateGame::doCreate()
     m_world->SetContactListener(m_contactListener.get());
 
     add(m_target);
+    m_lastCollisionAge = getAge();
 }
 
 void StateGame::doCreateInternal() { }
@@ -110,6 +111,9 @@ void StateGame::doInternalUpdate(float const elapsed)
             getGame()->switchState(std::make_shared<StateMenu>());
         }
     }
+    if (m_deathAge > 0.0f) {
+        handleDeath(elapsed);
+    }
     m_tilemap->update(elapsed);
 
     // m_background->setPosition(getGame()->getCamOffset());
@@ -118,7 +122,8 @@ void StateGame::doInternalUpdate(float const elapsed)
 }
 void StateGame::doScrolling(float const elapsed)
 {
-
+    if (m_deathAge >= 0.0f)
+        return;
     auto const mps = JamTemplate::InputManager::getMousePositionScreen();
     auto const tpw = m_target->getTargetPosition();
     auto const tps = getGame()->getRenderWindow()->mapCoordsToPixel(tpw, *getGame()->getView())
@@ -178,11 +183,54 @@ void StateGame::doInternalDraw() const
 
 void StateGame::handleDamage(float damage)
 {
+    if (m_deathAge >= 0.0f)
+        return;
+    if (getAge() < m_lastCollisionAge + GP::InvulnerabilityAge()) {
+        return;
+    }
+
     if (damage > GP::AllowedCollisionSpeed()) {
         getGame()->shake(GP::StrongShakeDuration(), GP::StrongShakeIntensity());
         m_overlay->flash(GP::StrongFlashDuration(), GP::StrongFlashColor());
+        size_t newDamage = m_target->getDamage() + 1;
+        if (newDamage > GP::MaxCrystalDamage()) {
+            m_deathAge = getAge();
+            return;
+        }
+        m_target->setDamage(newDamage);
     } else if (damage > GP::AllowedCollisionSpeed() / 2.0f) {
         getGame()->shake(GP::WeakShakeDuration(), GP::WeakShakeIntensity());
         m_overlay->flash(GP::WeakFlashDuration(), GP::WeakFlashColor());
     }
+    m_lastCollisionAge = getAge();
+}
+
+void StateGame::handleDeath(float const elapsed)
+{
+    float t = getAge();
+    m_target->kill();
+
+    // Allow for skipping the animation
+    for (auto& k : JamTemplate::InputHelper::getAllKeys()) {
+        if (JamTemplate::InputManager::justReleased(k)) {
+            getGame()->switchState(std::make_shared<StateMenu>());
+        }
+    }
+
+    // wait 1.5s
+    if (t <= m_deathAge + 1.5f) {
+        return;
+    }
+    // scroll up + tween to black
+
+    getGame()->moveCam(sf::Vector2f { 0, -GP::ScrollSpeedY() * elapsed });
+    if (!m_alreadyTweening) {
+        auto tw = JamTemplate::TweenAlpha<JamTemplate::SmartShape>::create(
+            m_overlay, 1.5f, sf::Uint8 { 0 }, sf::Uint8 { 255 });
+        tw->addCompleteCallback(
+            [this]() { getGame()->switchState(std::make_shared<StateMenu>()); });
+        tw->setSkipFrames();
+        add(tw);
+    }
+    m_alreadyTweening = true;
 }
