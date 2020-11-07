@@ -52,11 +52,13 @@ public:
 
     // FIXME: Not ideal because it only supports rectangles.
     std::map<std::string, std::vector<Rect>> getObjectGroups() { return m_objectGroups; };
+    void toggleObjectGroupVisibility() { m_highlightObjectGroups = !m_highlightObjectGroups; };
 
 private:
     std::unique_ptr<tson::Map> m_map;
     // Map from object layer name to vector of objects, all rectangular.
     std::map<std::string, std::vector<Rect>> m_objectGroups;
+    bool m_highlightObjectGroups = false;
     mutable std::vector<std::unique_ptr<sf::Sprite>> m_tileSprites;
 
     sf::Vector2f m_position;

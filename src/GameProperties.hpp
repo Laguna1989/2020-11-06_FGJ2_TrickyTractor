@@ -30,6 +30,7 @@ public:
 
     static std::string GameName() { return "TrickyTractor"; }
 
+    static const sf::Keyboard::Key KeyToggleDrawObjectGroups() { return sf::Keyboard::F5; };
     static const b2BodyDef defaultColliderDef(const Rect& rect)
     {
         b2BodyDef retVal {};
