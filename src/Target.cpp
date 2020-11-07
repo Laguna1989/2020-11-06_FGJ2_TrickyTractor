@@ -26,14 +26,14 @@ void Target::doCreate()
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &dynamicBox;
     fixtureDef.density = 1.0f;
-    fixtureDef.friction = 0.9f;
+    fixtureDef.friction = 0.1f;
 
     getB2Body()->CreateFixture(&fixtureDef);
 
     m_beamPosX = 100;
 
     m_beamShape = std::make_shared<JamTemplate::SmartShape>();
-    m_beamShape->makeRect(sf::Vector2f { 32, GP::ScreenSizeInGame().y });
+    m_beamShape->makeRect(sf::Vector2f { GP::TractorBeamWidth(), GP::ScreenSizeInGame().y });
     m_beamShape->setColor(sf::Color { 255, 255, 255, 0 });
 
     m_beamBorderShape = std::make_shared<JamTemplate::SmartShape>();
@@ -52,10 +52,19 @@ void Target::doUpdate(float const elapsed)
     // m_beamShape->setPosition(m_animation->getPosition());
     m_beamShape->update(elapsed);
     m_beamBorderShape->update(elapsed);
+
+    auto vx = getB2Body()->GetLinearVelocity().x;
+    auto vy = getB2Body()->GetLinearVelocity().y;
+    vx *= 0.995;
+    getB2Body()->SetLinearVelocity(b2Vec2 { vx, vy });
 }
 
 void Target::handleInput(float const elapsed)
 {
+
+    m_beamPosXLast = m_beamPosX;
+    m_beamPosX = JamTemplate::InputManager::getMousePositionWorld().x;
+
     if (JamTemplate::InputManager::pressed(sf::Keyboard::Key::Space)
         || JamTemplate::InputManager::pressed(sf::Keyboard::Key::W)
         || JamTemplate::InputManager::pressed(sf::Keyboard::Key::Up)
@@ -64,18 +73,24 @@ void Target::handleInput(float const elapsed)
 
         using C = JamTemplate::Collision;
         if (C::BoundingBoxTest(m_animation, m_beamShape)) {
-            std::cout << "overlap\n";
+            // std::cout << "overlap\n";
+
+            float deltaX = m_beamPosX - m_beamPosXLast;
+            float deltaXClamped
+                = JamTemplate::MathHelper::clamp(deltaX * GP::MouseMovementXToBeamConversion(),
+                    -GP::TractorBeamStrengthX(), GP::TractorBeamStrengthX());
+
             getB2Body()->ApplyForceToCenter(
-                b2Vec2 { 0, -GP::TractorBeamStrengthY() * getB2Body()->GetMass() }, true);
+                b2Vec2 { deltaXClamped * getB2Body()->GetMass(),
+                    -GP::TractorBeamStrengthY() * getB2Body()->GetMass() },
+                true);
+
         } else {
-            std::cout << "NO overlap\n";
+            // std::cout << "NO overlap\n";
         }
     } else {
-
         setBeamStrength(0.0f);
     }
-
-    m_beamPosX = JamTemplate::InputManager::getMousePositionWorld().x;
 }
 
 void Target::doDraw() const
@@ -87,7 +102,7 @@ void Target::doDraw() const
     m_beamBorderShape->update(0.0f);
     m_beamBorderShape->draw(getGame()->getRenderTarget());
 
-    m_beamBorderShape->setPosition(sf::Vector2f { m_beamPosX + 32, 0 });
+    m_beamBorderShape->setPosition(sf::Vector2f { m_beamPosX + GP::TractorBeamWidth(), 0 });
     m_beamBorderShape->update(0.0f);
     m_beamBorderShape->draw(getGame()->getRenderTarget());
 }

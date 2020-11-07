@@ -18,7 +18,7 @@ private:
     std::shared_ptr<JamTemplate::SmartShape> m_beamShape;
     mutable std::shared_ptr<JamTemplate::SmartShape> m_beamBorderShape;
     float m_beamPosX;
-
+    float m_beamPosXLast;
     void doUpdate(float const /*elapsed*/) override;
     void doDraw() const override;
     void doCreate() override;
