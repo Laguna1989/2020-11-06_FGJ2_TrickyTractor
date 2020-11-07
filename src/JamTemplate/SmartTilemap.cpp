@@ -39,9 +39,7 @@ SmartTilemap::SmartTilemap(std::filesystem::path const& path)
     for (auto& layer : m_map->getLayers()) {
         const std::string currentGroupName = layer.getName();
         for (auto& obj : layer.getObjects()) {
-            // FIXME: Use Conversions::stuff
-            Rect collider { sf::Vector2f(obj.getPosition().x, obj.getPosition().y),
-                sf::Vector2f(obj.getSize().x, obj.getSize().y), obj.getRotation() };
+            Rect collider { C::vec(obj.getPosition()), C::vec(obj.getSize()), obj.getRotation() };
             m_objectGroups[currentGroupName].push_back(collider);
         }
     }
