@@ -155,4 +155,10 @@ void SmartTilemap::setScreenSizeHint(sf::Vector2f const& hint, std::shared_ptr<G
     m_screenSizeHint = hint;
     m_gamePtr = ptr;
 }
+
+const sf::Vector2i SmartTilemap::getMapSizeInTiles()
+{
+    return sf::Vector2i { m_map->getSize().x, m_map->getSize().y };
+}
+
 } // namespace JamTemplate

@@ -43,6 +43,8 @@ public:
     void setScale(sf::Vector2f const& scale);
     const sf::Vector2f getScale() const;
 
+    const sf::Vector2i getMapSizeInTiles();
+
     void setOrigin(sf::Vector2f const& origin);
     const sf::Vector2f getOrigin() const;
 
