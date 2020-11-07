@@ -4,6 +4,7 @@
 #include "Box2DObject.hpp"
 #include "SmartAnimation.hpp"
 #include "SmartShape.hpp"
+#include "SmartSprite.hpp"
 #include <string>
 
 class Target : public JamTemplate::Box2DObject {
@@ -18,8 +19,10 @@ public:
     std::shared_ptr<JamTemplate::SmartAnimation> getTarget() { return m_animation; }
 
 private:
+    std::shared_ptr<JamTemplate::SmartSprite> m_glow;
     std::shared_ptr<JamTemplate::SmartAnimation> m_animation;
     std::shared_ptr<JamTemplate::SmartShape> m_beamShape;
+
     mutable std::shared_ptr<JamTemplate::SmartShape> m_beamBorderShape;
     float m_beamPosX;
     float m_beamPosXLast;

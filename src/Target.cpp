@@ -40,6 +40,10 @@ void Target::doCreate()
 
     m_beamBorderShape = std::make_shared<JamTemplate::SmartShape>();
     m_beamBorderShape->makeRect(sf::Vector2f { 1, GP::ScreenSizeInGame().y });
+
+    m_glow = std::make_shared<JamTemplate::SmartSprite>();
+    m_glow->loadSprite("#g#60#80");
+    m_glow->setColor(sf::Color { 255, 255, 163 });
 }
 
 void Target::doUpdate(float const elapsed)
@@ -60,6 +64,8 @@ void Target::doUpdate(float const elapsed)
     auto vy = getB2Body()->GetLinearVelocity().y;
     vx *= GP::TargetAirFrictionX();
     getB2Body()->SetLinearVelocity(b2Vec2 { vx, vy });
+    m_glow->setPosition(m_animation->getPosition() - sf::Vector2f { 30, 30 });
+    m_glow->update(elapsed);
 }
 
 void Target::handleInput(float const elapsed)
@@ -109,6 +115,7 @@ void Target::doDraw() const
         sf::Vector2f { m_beamPosX + GP::TractorBeamWidth() / 2, getGame()->getCamOffset().y });
     m_beamBorderShape->update(0.0f);
     m_beamBorderShape->draw(getGame()->getRenderTarget());
+    m_glow->draw(getGame()->getRenderTarget());
 }
 
 void Target::setBeamStrength(float const v)

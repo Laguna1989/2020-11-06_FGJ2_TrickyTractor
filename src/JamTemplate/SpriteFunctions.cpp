@@ -30,26 +30,27 @@ sf::Image makeButtonImage(
     return img;
 }
 
-// sf::Image makeGlowImage(float r)
-//{
-//    unsigned int s = static_cast<unsigned int>(r + 0.5f * 2);
-//    sf::Image img {};
-//    img.create(s, s, sf::Color { 0, 0, 0, 0 });
-//
-//    float c = r / 2;
-//
-//    for (auto i = 0U; i != s; ++i) {
-//        for (auto j = 0U; j != s; ++j) {
-//            auto const dx = i - c;
-//            auto const dy = j - c;
-//
-//            auto const sqr = std::sqrt(dx * dx + dy * dy);
-//            auto const sqrNorm = MathHelper::clamp(sqr / s, 0.0f, 1.0f);
-//
-//            // img.setPixel(i, j, sf::Color {255,255,255, sqrNorm})
-//        }
-//    }
-//}
+sf::Image makeGlowImage(float r, std::uint8_t max)
+{
+    unsigned int s = static_cast<unsigned int>(r + 0.5f * 2);
+    sf::Image img {};
+    img.create(s, s, sf::Color { 0, 0, 0, 0 });
+
+    float c = r / 2;
+
+    for (auto i = 0U; i != s; ++i) {
+        for (auto j = 0U; j != s; ++j) {
+            auto const dx = i - c;
+            auto const dy = j - c;
+
+            auto const sqr = std::sqrt(dx * dx + dy * dy);
+            auto const sqrNorm = 1.0f - MathHelper::clamp(sqr / s * 2.0f, 0.0f, 1.0f);
+            float const v = std::pow(sqrNorm, 2.0f) * max;
+            img.setPixel(i, j, sf::Color { 255, 255, 255, static_cast<uint8_t>(v) });
+        }
+    }
+    return img;
+}
 
 } // namespace SpriteFunctions
 } // namespace JamTemplate

@@ -28,6 +28,23 @@ sf::Image createButtonImage(std::vector<std::string> const& ssv)
         static_cast<unsigned int>(w), static_cast<unsigned int>(h));
 }
 
+sf::Image createGlowImage(std::vector<std::string> const& ssv)
+{
+    if (ssv.size() != 3) {
+        throw std::invalid_argument { "create glow image: vector does not contain 2 elements." };
+    }
+    std::size_t count { 0 };
+    long s = std::stoul(ssv.at(1), &count);
+    if (count != ssv.at(1).size()) {
+        throw std::invalid_argument { "invalid glow size" };
+    }
+    long max = std::stoul(ssv.at(2), &count);
+    if (count != ssv.at(2).size()) {
+        throw std::invalid_argument { "invalid glowmax" };
+    }
+    return SpriteFunctions::makeGlowImage(s, max);
+}
+
 void replaceOneColor(sf::Image& img, sf::Color const& from, sf::Color const& to)
 {
     for (unsigned int x = 0; x != img.getSize().x; ++x) {
@@ -122,6 +139,8 @@ sf::Texture& TextureManager::get(std::string const& str)
                 m_textures[str].loadFromImage(createButtonImage(ssv));
             } else if (ssv.at(0) == "r") {
                 m_textures[str].loadFromImage(createReplacedImage(ssv, m_selectiveColorReplace));
+            } else if (ssv.at(0) == "g") {
+                m_textures[str].loadFromImage(createGlowImage(ssv));
             } else {
                 throw std::invalid_argument("ERROR: cannot get texture with name " + str);
             }
