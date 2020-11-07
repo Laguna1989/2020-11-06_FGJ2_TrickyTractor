@@ -25,7 +25,8 @@ public:
 
     static std::string GameName() { return "TrickyTractor"; }
 
-    static float Gravity() { return 10.0f; }
+    static float GravityStrength() { return 10.0f; }
+    static float TractorBeamStrength() { return 10.0f; }
 };
 
 #endif

@@ -31,7 +31,7 @@ void StateGame::doCreate()
     doCreateInternal();
     add(m_hud);
 
-    m_world = std::make_shared<b2World>(b2Vec2 { 0, GP::Gravity() });
+    m_world = std::make_shared<b2World>(b2Vec2 { 0, GP::GravityStrength() });
 
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
