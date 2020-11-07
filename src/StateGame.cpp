@@ -12,6 +12,8 @@
 #include "TweenAlpha.hpp"
 #include <SmartTilemap.hpp>
 
+StateGame::StateGame(int levelID) { m_levelID = levelID; }
+
 void StateGame::doCreate()
 {
     float w = static_cast<float>(getGame()->getRenderTarget()->getSize().x);
@@ -37,7 +39,7 @@ void StateGame::doCreate()
     add(tw);
 
     m_tilemap = std::make_shared<JamTemplate::SmartTilemap>(
-        std::filesystem::path("assets/tricky-tractor-level-0.json"));
+        std::filesystem::path(GP::getLevelList().at(m_levelID).first));
     m_tilemap->setScreenSizeHint(GP::ScreenSizeInGame(), getGame());
 
     doCreateInternal();

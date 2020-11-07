@@ -12,26 +12,6 @@
 #include "StateGame.hpp"
 
 StateMenu::StateMenu() = default;
-void StateMenu::doInternalUpdate(float const elapsed)
-{
-    if (!m_starting) {
-        using ip = JamTemplate::InputManager;
-        if (ip::justPressed(sf::Keyboard::Key::Space)
-            || ip::justPressed(sf::Keyboard::Key::Return)) {
-
-            m_starting = true;
-            auto tw = JamTemplate::TweenAlpha<JamTemplate::SmartShape>::create(
-                m_overlay, 0.5f, sf::Uint8 { 0 }, sf::Uint8 { 255 });
-            tw->setSkipFrames();
-            tw->addCompleteCallback(
-                [this]() { getGame()->switchState(std::make_shared<StateGame>()); });
-            add(tw);
-        }
-
-        m_text_Title->update(elapsed);
-        m_test_Explanation->update(elapsed);
-    }
-}
 
 void StateMenu::doCreate()
 {
@@ -129,12 +109,114 @@ void StateMenu::doCreate()
         tw3->setSkipFrames();
         add(tw3);
     }
+
+    m_currentLevel = 0;
+
+    for (auto i = 0U; i != GP::getLevelList().size(); ++i) {
+        auto st = std::make_shared<SmartText>();
+        st->loadFont("assets/font.ttf");
+        st->setText(GP::getLevelList().at(i).second);
+        st->setCharacterSize(12U);
+        st->setPosition({ wC, static_cast<float>(130 + GP::GetMenuLevelTextDistance() * i) });
+        auto col = GP::PaletteColor4();
+        col.a = static_cast<uint8_t>(JamTemplate::MathHelper::clamp(
+            255 - static_cast<int>(std::fabs(i - m_currentLevel)) * 200, 0, 255));
+        st->setColor(col);
+        st->update(0.0f);
+
+        m_levelNames.push_back(st);
+    }
 }
+
+void StateMenu::doInternalUpdate(float const elapsed)
+{
+    if (!m_starting) {
+        using ip = JamTemplate::InputManager;
+        if (ip::justPressed(sf::Keyboard::Key::Space)
+            || ip::justPressed(sf::Keyboard::Key::Return)) {
+
+            m_starting = true;
+            auto tw = JamTemplate::TweenAlpha<JamTemplate::SmartShape>::create(
+                m_overlay, 0.5f, sf::Uint8 { 0 }, sf::Uint8 { 255 });
+            tw->setSkipFrames();
+            tw->addCompleteCallback(
+                [this]() { getGame()->switchState(std::make_shared<StateGame>(m_currentLevel)); });
+            add(tw);
+        }
+
+        m_text_Title->update(elapsed);
+        m_test_Explanation->update(elapsed);
+
+        if (JamTemplate::InputManager::justPressed(sf::Keyboard::Down)
+            || JamTemplate::InputManager::justPressed(sf::Keyboard::S)) {
+            m_currentLevel++;
+            float posOffset = 0;
+            if (m_currentLevel >= GP::getLevelList().size()) {
+                m_currentLevel = 0;
+                posOffset = m_levelNames.size() * GP::GetMenuLevelTextDistance();
+            }
+
+            for (auto i = 0U; i != m_levelNames.size(); ++i) {
+                auto col = GP::PaletteColor4();
+                uint8_t a = static_cast<uint8_t>(JamTemplate::MathHelper::clamp(
+                    255 - static_cast<int>(std::fabs(static_cast<int>(i) - m_currentLevel)) * 200,
+                    0, 255));
+
+                auto twa = JamTemplate::TweenAlpha<SmartText>::create(
+                    m_levelNames.at(i), 0.25f, m_levelNames.at(i)->getColor().a, a);
+                add(twa);
+
+                auto twp = JamTemplate::TweenPosition<SmartText>::create(m_levelNames.at(i), 0.25f,
+                    m_levelNames.at(i)->getPosition(),
+                    m_levelNames.at(i)->getPosition()
+                        - sf::Vector2f { 0, GP::GetMenuLevelTextDistance() - posOffset });
+                add(twp);
+            }
+        }
+
+        if (JamTemplate::InputManager::justPressed(sf::Keyboard::Up)
+            || JamTemplate::InputManager::justPressed(sf::Keyboard::W)) {
+            m_currentLevel--;
+            float posOffset = 0;
+            if (m_currentLevel < 0) {
+                m_currentLevel = GP::getLevelList().size() - 1;
+                posOffset = m_levelNames.size() * GP::GetMenuLevelTextDistance();
+            }
+
+            for (auto i = 0U; i != m_levelNames.size(); ++i) {
+                auto col = GP::PaletteColor4();
+                uint8_t a = static_cast<uint8_t>(JamTemplate::MathHelper::clamp(
+                    255 - static_cast<int>(std::fabs(static_cast<int>(i) - m_currentLevel)) * 200,
+                    0, 255));
+
+                auto twa = JamTemplate::TweenAlpha<SmartText>::create(
+                    m_levelNames.at(i), 0.25f, m_levelNames.at(i)->getColor().a, a);
+                add(twa);
+
+                auto twp = JamTemplate::TweenPosition<SmartText>::create(m_levelNames.at(i), 0.25f,
+                    m_levelNames.at(i)->getPosition(),
+                    m_levelNames.at(i)->getPosition()
+                        + sf::Vector2f { 0, GP::GetMenuLevelTextDistance() - posOffset });
+                add(twp);
+            }
+        }
+
+        for (auto const& st : m_levelNames) {
+            st->update(elapsed);
+        }
+    }
+}
+
 void StateMenu::doInternalDraw() const
 {
     m_background->draw(getGame()->getRenderTarget());
 
     m_text_Title->draw(getGame()->getRenderTarget());
+
+    for (auto const& st : m_levelNames) {
+        st->draw(getGame()->getRenderTarget());
+    }
+
     m_test_Explanation->draw(getGame()->getRenderTarget());
     m_text_Credits->draw(getGame()->getRenderTarget());
 

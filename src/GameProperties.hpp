@@ -65,8 +65,17 @@ public:
         levelList.push_back(std::make_pair<std::string, std::string>(
             "assets/tricky-tractor-level-0.json", "The Beginning"));
         levelList.push_back(std::make_pair<std::string, std::string>(
-            "assets/tricky-tractor-level-0.json", "Are you serious?"));
+            "assets/tricky-tractor-level-0.json", "Duplicate 1"));
+        levelList.push_back(std::make_pair<std::string, std::string>(
+            "assets/tricky-tractor-level-0.json", "Duplicate 2"));
+        levelList.push_back(std::make_pair<std::string, std::string>(
+            "assets/tricky-tractor-level-0.json", "Duplicat 3"));
+        levelList.push_back(std::make_pair<std::string, std::string>(
+            "assets/tricky-tractor-level-10.json", "Are you serious?"));
+        return levelList;
     }
+
+    static float GetMenuLevelTextDistance() { return 14; }
 };
 
 #endif
