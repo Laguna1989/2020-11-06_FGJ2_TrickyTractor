@@ -1,6 +1,9 @@
 ﻿#ifndef GAME_GAMEPROPERTIES_HPP_INCLUDEGUARD
 #define GAME_GAMEPROPERTIES_HPP_INCLUDEGUARD
 
+#include "Conversions.hpp"
+#include "MathHelper.hpp"
+#include "Rect.hpp"
 #include <Box2D/Dynamics/b2Body.h>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -27,11 +30,14 @@ public:
 
     static std::string GameName() { return "TrickyTractor"; }
 
-    static const b2BodyDef defaultColliderDef()
+    static const b2BodyDef defaultColliderDef(const Rect& rect)
     {
-        const b2BodyDef retVal {};
+        b2BodyDef retVal {};
+        retVal.position = JamTemplate::C::vec(rect.position);
+        retVal.angle = JamTemplate::MathHelper::deg2rad(rect.rotation);
         return retVal;
     }
+    static const std::string ColliderLayerName() { return "Terrain: Kollisionen"; }
     static float GravityStrength() { return 40.0f; }
     static float TractorBeamWidth() { return 40.0f; }
     static float TractorBeamStrengthY() { return 80.0f; }

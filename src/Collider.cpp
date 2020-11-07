@@ -1,21 +1,19 @@
 ﻿#include "Collider.hpp"
 #include "GameProperties.hpp"
-#include "JamTemplate/Random.hpp"
+#include "MathHelper.hpp"
 
 Collider::Collider(std::shared_ptr<b2World> world, const Rect& rectDef)
-    : Box2DObject(world, &GP::defaultColliderDef())
+    : Box2DObject(world, &GP::defaultColliderDef(rectDef))
 {
-    m_collisionBox = std::make_shared<JamTemplate::SmartShape>();
-    m_collisionBox->makeRect(rectDef.sizeDiagonal);
-    m_collisionBox->setPosition(rectDef.position);
-    m_collisionBox->setRotation(rectDef.rotation);
-}
 
-void Collider::toggleVisibility()
-{
-    if (m_visible) {
-        m_collisionBox->setColor(sf::Color { 0, 0, 0, 0 });
-    } else {
-        m_collisionBox->setColor(JamTemplate::Random::getRandomColor());
-    }
+    b2Vec2 halfAxes(rectDef.sizeDiagonal.x / 2.0f, rectDef.sizeDiagonal.y / 2.0f);
+    b2PolygonShape dynamicBox;
+    dynamicBox.SetAsBox(halfAxes.x, halfAxes.y, halfAxes, 0.0f);
+
+    b2FixtureDef fixtureDef;
+    fixtureDef.shape = &dynamicBox;
+    fixtureDef.density = 1.0f;
+    fixtureDef.friction = 0.9f;
+
+    getB2Body()->CreateFixture(&fixtureDef);
 }

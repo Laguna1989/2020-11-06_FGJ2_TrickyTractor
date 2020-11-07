@@ -30,9 +30,6 @@ void StateGame::doCreate()
     tw->setSkipFrames();
     add(tw);
 
-    // TODO: Add object group for colliders here (m_colliders)
-    m_colliders = std::make_shared<JamTemplate::ObjectGroup<Collider>>();
-
     m_tilemap = std::make_shared<JamTemplate::SmartTilemap>(
         std::filesystem::path("assets/tricky-tractor-level-0.json"));
     m_tilemap->setScreenSizeHint(GP::ScreenSizeInGame(), getGame());
@@ -41,6 +38,15 @@ void StateGame::doCreate()
     add(m_hud);
 
     m_world = std::make_shared<b2World>(b2Vec2 { 0, GP::GravityStrength() });
+
+    m_colliders = std::make_shared<JamTemplate::ObjectGroup<Collider>>();
+    auto const lol = m_tilemap->getObjectGroups().at(GP::ColliderLayerName());
+    for (auto& rect : lol) {
+        auto coll = std::make_shared<Collider>(m_world, rect);
+        add(coll);
+        m_colliders->push_back(coll);
+    }
+    add(m_colliders);
 
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;

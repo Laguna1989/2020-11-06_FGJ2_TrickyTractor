@@ -8,12 +8,6 @@
 class Collider : public JamTemplate::Box2DObject {
 public:
     Collider(std::shared_ptr<b2World> world, const Rect& rectDef);
-
-    void toggleVisibility();
-
-private:
-    std::shared_ptr<JamTemplate::SmartShape> m_collisionBox = nullptr;
-    bool m_visible = false;
 };
 
 #endif

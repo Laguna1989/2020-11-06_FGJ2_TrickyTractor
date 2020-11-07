@@ -50,6 +50,9 @@ public:
 
     void setScreenSizeHint(sf::Vector2f const& hint, std::shared_ptr<Game> ptr);
 
+    // FIXME: Not ideal because it only supports rectangles.
+    std::map<std::string, std::vector<Rect>> getObjectGroups() { return m_objectGroups; };
+
 private:
     std::unique_ptr<tson::Map> m_map;
     // Map from object layer name to vector of objects, all rectangular.

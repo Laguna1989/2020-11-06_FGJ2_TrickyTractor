@@ -109,8 +109,6 @@ void SmartTilemap::doDraw(std::shared_ptr<sf::RenderTarget> const sptr) const
         }
     }
 }
-// TODO: public std::map<std::string, std::vector<Collider>> getObjectLayers() + Ne Notiz, dass das
-// refaktoriert gehört
 
 void SmartTilemap::doDrawFlash(std::shared_ptr<sf::RenderTarget> const sptr) const { }
 void SmartTilemap::doDrawShadow(std::shared_ptr<sf::RenderTarget> const sptr) const { }
