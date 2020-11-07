@@ -33,6 +33,8 @@ private:
 
     std::shared_ptr<b2World> m_world;
 
+    std::shared_ptr<JamTemplate::SmartShape> m_endZone;
+
     void doCreate() override;
 
     virtual void doCreateInternal();

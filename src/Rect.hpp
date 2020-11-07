@@ -7,6 +7,7 @@ struct Rect {
     sf::Vector2f position;
     sf::Vector2f sizeDiagonal;
     float rotation;
+    std::string m_type;
 };
 
 #endif

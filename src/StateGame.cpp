@@ -53,9 +53,17 @@ void StateGame::doCreate()
     // get start position
     sf::Vector2f startPosition;
     auto const other = m_tilemap->getObjectGroups().at(GP::OtherLayerName());
-    if (!other.empty()) {
-        startPosition = other.at(0).position;
-        std::cout << startPosition.x << " " << startPosition.y << "\n";
+    for (auto const r : other) {
+        if (r.m_type == "start") {
+            startPosition = r.position;
+            // std::cout << startPosition.x << " " << startPosition.y << "\n";
+        } else if (r.m_type == "end") {
+            m_endZone = std::make_shared<JamTemplate::SmartShape>();
+            m_endZone->makeRect(r.sizeDiagonal);
+            m_endZone->setColor(sf::Color { 255, 255, 255, 100 });
+            m_endZone->setPosition(r.position);
+            m_endZone->setRotation(r.rotation);
+        }
     }
     getGame()->setCamOffset(startPosition);
 
@@ -77,6 +85,7 @@ void StateGame::doInternalUpdate(float const elapsed)
     int32 positionIterations = 2;
     m_world->Step(elapsed, velocityIterations, positionIterations);
 
+    m_endZone->update(elapsed);
     doScrolling(elapsed);
 }
 void StateGame::doScrolling(float const elapsed)
@@ -116,5 +125,6 @@ void StateGame::doInternalDraw() const
     m_background->draw(getGame()->getRenderTarget());
     m_tilemap->draw(getGame()->getRenderTarget());
     drawObjects();
+    m_endZone->draw(getGame()->getRenderTarget());
     m_overlay->draw(getGame()->getRenderTarget());
 }
