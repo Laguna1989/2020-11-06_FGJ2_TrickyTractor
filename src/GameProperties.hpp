@@ -53,7 +53,7 @@ public:
     static sf::Vector2f ScreenSizeInGame() { return WindowSizeOutGame() / Zoom(); }
     static int TileSizeInPixel() { return 12; }
 
-    static float ScrollBoundary() { return 100.0f; }
+    static float ScrollBoundary() { return 87.0f; }
     static float ScrollSpeedX() { return 45.0f; }
     static float ScrollSpeedY() { return 70.0f; }
 };
