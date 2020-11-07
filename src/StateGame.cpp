@@ -84,13 +84,21 @@ void StateGame::doCreate()
 
     add(m_target);
     m_lastCollisionAge = getAge();
+
+    m_vignette = std::make_shared<JamTemplate::SmartSprite>();
+
+    m_vignette->loadSprite("#v#" + std::to_string(static_cast<int>(GP::ScreenSizeInGame().x)) + "#"
+        + std::to_string(static_cast<int>(GP::ScreenSizeInGame().y)));
+    m_vignette->setIgnoreCamMovement(true);
 }
 
 void StateGame::doCreateInternal() { }
 
 void StateGame::doInternalUpdate(float const elapsed)
 {
+    m_background->update(elapsed);
     m_overlay->update(elapsed);
+    m_vignette->update(elapsed);
     if (JamTemplate::InputManager::justReleased(GP::KeyToggleDrawObjectGroups())) {
         m_tilemap->toggleObjectGroupVisibility();
     }
@@ -115,10 +123,6 @@ void StateGame::doInternalUpdate(float const elapsed)
         handleDeath(elapsed);
     }
     m_tilemap->update(elapsed);
-
-    // m_background->setPosition(getGame()->getCamOffset());
-    // std::cout << getGame()->getCamOffset().x << " " << getGame()->getCamOffset().y << "\n";
-    m_background->update(elapsed);
 }
 void StateGame::doScrolling(float const elapsed)
 {
@@ -178,6 +182,7 @@ void StateGame::doInternalDraw() const
     if (m_endZone) {
         m_endZone->draw(getGame()->getRenderTarget());
     }
+    m_vignette->draw(getGame()->getRenderTarget());
     m_overlay->draw(getGame()->getRenderTarget());
 }
 

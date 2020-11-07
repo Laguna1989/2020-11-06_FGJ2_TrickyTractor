@@ -50,7 +50,7 @@ void StateMenu::doCreate()
     m_text_Credits = std::make_shared<JamTemplate::SmartText>();
     m_text_Credits->loadFont("assets/font.ttf");
     m_text_Credits->setCharacterSize(8U);
-    m_text_Credits->setText("Created by @BloodyOrange, @adkiem,\n@Synchronleuchter and "
+    m_text_Credits->setText("Created by @xxBloodyOrange, @adkiem,\n@Synchronleuchter and "
                             "@Laguna_999\nfor #JamFranken2020\n2020-11-06");
     m_text_Credits->setPosition({ 4, 250 });
     m_text_Credits->setColor(GP::PaletteColor5());

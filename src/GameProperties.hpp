@@ -92,6 +92,8 @@ public:
     } // Must have at least this many + 1 crystal frames
     static float InvulnerabilityAge() { return 2.0f; }
     static float MenuInputDeadTime() { return 0.2f; }
+
+    static float BeamColorMaxAlpha() { return 170.0f; }
 };
 
 #endif

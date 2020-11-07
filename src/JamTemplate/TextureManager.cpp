@@ -45,6 +45,25 @@ sf::Image createGlowImage(std::vector<std::string> const& ssv)
     return SpriteFunctions::makeGlowImage(s, max);
 }
 
+sf::Image createVignetteImage(std::vector<std::string> const& ssv)
+{
+    if (ssv.size() != 3) {
+        throw std::invalid_argument {
+            "create vignette image: vector does not contain 2 elements."
+        };
+    }
+    std::size_t count { 0 };
+    long w = std::stoul(ssv.at(1), &count);
+    if (count != ssv.at(1).size()) {
+        throw std::invalid_argument { "invalid vignette w" };
+    }
+    long h = std::stoul(ssv.at(2), &count);
+    if (count != ssv.at(2).size()) {
+        throw std::invalid_argument { "invalid vignette h" };
+    }
+    return SpriteFunctions::makeVignetteImage(w, h);
+}
+
 void replaceOneColor(sf::Image& img, sf::Color const& from, sf::Color const& to)
 {
     for (unsigned int x = 0; x != img.getSize().x; ++x) {
@@ -141,6 +160,8 @@ sf::Texture& TextureManager::get(std::string const& str)
                 m_textures[str].loadFromImage(createReplacedImage(ssv, m_selectiveColorReplace));
             } else if (ssv.at(0) == "g") {
                 m_textures[str].loadFromImage(createGlowImage(ssv));
+            } else if (ssv.at(0) == "v") {
+                m_textures[str].loadFromImage(createVignetteImage(ssv));
             } else {
                 throw std::invalid_argument("ERROR: cannot get texture with name " + str);
             }
