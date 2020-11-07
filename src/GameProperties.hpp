@@ -8,6 +8,8 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <string>
+#include <utility>
+#include <vector>
 
 class GP {
 public:
@@ -28,7 +30,7 @@ public:
     static sf::Color PaletteFlashGreen() { return sf::Color { 51, 143, 63 }; }
     static sf::Color PaletteFlashRed() { return sf::Color { 143, 33, 33 }; }
 
-    static std::string GameName() { return "TrickyTractor"; }
+    static std::string GameName() { return "Tricky\nTractor"; }
 
     static const sf::Keyboard::Key KeyToggleDrawObjectGroups() { return sf::Keyboard::F5; };
     static const b2BodyDef defaultColliderDef(const Rect& rect)
@@ -56,6 +58,15 @@ public:
     static float ScrollBoundary() { return 87.0f; }
     static float ScrollSpeedX() { return 45.0f; }
     static float ScrollSpeedY() { return 70.0f; }
+
+    static std::vector<std::pair<std::string, std::string>> getLevelList()
+    {
+        std::vector<std::pair<std::string, std::string>> levelList {};
+        levelList.push_back(std::make_pair<std::string, std::string>(
+            "assets/tricky-tractor-level-0.json", "The Beginning"));
+        levelList.push_back(std::make_pair<std::string, std::string>(
+            "assets/tricky-tractor-level-0.json", "Are you serious?"));
+    }
 };
 
 #endif

@@ -48,17 +48,17 @@ void StateMenu::doCreate()
     m_text_Title->loadFont("assets/font.ttf");
     m_text_Title->setCharacterSize(32U);
     m_text_Title->setText(GP::GameName());
-    m_text_Title->setPosition({ wC, 20 });
+    m_text_Title->SetTextAlign(JamTemplate::SmartText::TextAlign::CENTER);
+    m_text_Title->setPosition({ wC, 5 });
     m_text_Title->setColor(GP::PaletteColor3());
     m_text_Title->update(0.0f);
-    m_text_Title->SetTextAlign(JamTemplate::SmartText::TextAlign::CENTER);
     m_text_Title->setShadow(GP::PaletteFontShadow(), sf::Vector2f { 3, 3 });
 
     m_test_Explanation = std::make_shared<JamTemplate::SmartText>();
     m_test_Explanation->loadFont("assets/font.ttf");
     m_test_Explanation->setCharacterSize(16U);
-    m_test_Explanation->setText("Press Space to start the game");
-    m_test_Explanation->setPosition({ wC, 150 });
+    m_test_Explanation->setText("Press Space");
+    m_test_Explanation->setPosition({ wC, 210 });
     m_test_Explanation->setColor(GP::PaletteColor4());
     m_test_Explanation->update(0.0f);
     auto const textWidth = m_test_Explanation->getLocalBounds().width;
@@ -70,8 +70,9 @@ void StateMenu::doCreate()
     m_text_Credits = std::make_shared<JamTemplate::SmartText>();
     m_text_Credits->loadFont("assets/font.ttf");
     m_text_Credits->setCharacterSize(10U);
-    m_text_Credits->setText("Created by @Laguna_999 for #1hgj288\nHalloween2020");
-    m_text_Credits->setPosition({ 10, 265 });
+    m_text_Credits->setText("Created by @BloodyOrange, @adkiem,\n@Synchronleuchter and "
+                            "@Laguna_999\nfor #JamFranken2020\n2020-11-06");
+    m_text_Credits->setPosition({ 4, 245 });
     m_text_Credits->setColor(GP::PaletteColor5());
     m_text_Credits->SetTextAlign(JamTemplate::SmartText::TextAlign::LEFT);
     m_text_Credits->update(0.0f);
