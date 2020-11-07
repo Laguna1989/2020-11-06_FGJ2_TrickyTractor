@@ -116,7 +116,4 @@ void Target::setBeamStrength(float const v)
     m_beamShape->setColor(sf::Color { 255, 255, 255, v2 });
 }
 
-sf::Vector2f Target::getBeamCenterPosition()
-{
-    return sf::Vector2f { m_beamPosX, JamTemplate::InputManager::getMousePositionWorld().y };
-}
+sf::Vector2f Target::getTargetPosition() { return m_animation->getPosition(); }

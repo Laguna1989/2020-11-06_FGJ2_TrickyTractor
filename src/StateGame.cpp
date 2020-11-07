@@ -83,23 +83,31 @@ void StateGame::doScrolling(float const elapsed)
 {
 
     auto const mps = JamTemplate::InputManager::getMousePositionScreen();
+    auto const tpw = m_target->getTargetPosition();
+    auto const tps = getGame()->getRenderWindow()->mapCoordsToPixel(tpw, *getGame()->getView())
+        / static_cast<int>(GP::Zoom());
+
+    // std::cout << tps.x << " " << tps.y << "\n";
 
     auto const mpsc
         = sf::Vector2f { JamTemplate::MathHelper::clamp(mps.x, 0.0f, GP::ScreenSizeInGame().x),
               JamTemplate::MathHelper::clamp(mps.y, 0.0f, GP::ScreenSizeInGame().y) };
 
     if (mpsc.x < GP::ScrollBoundary()) {
-        getGame()->moveCam(sf::Vector2f { -GP::ScrllSpeed(), 0 } * elapsed);
+        getGame()->moveCam(sf::Vector2f { -GP::ScrollSpeedX(), 0 } * elapsed);
     }
     if (mpsc.x > GP::ScreenSizeInGame().x - GP::ScrollBoundary()) {
-        getGame()->moveCam(sf::Vector2f { GP::ScrllSpeed(), 0 } * elapsed);
+        getGame()->moveCam(sf::Vector2f { GP::ScrollSpeedX(), 0 } * elapsed);
     }
 
-    if (mpsc.y < GP::ScrollBoundary()) {
-        getGame()->moveCam(sf::Vector2f { 0, -GP::ScrllSpeed() } * elapsed);
+    if (tps.y < GP::ScrollBoundary()) {
+        float const f = (tps.y < 0) ? 2.0f : 1.0f;
+        getGame()->moveCam(sf::Vector2f { 0, -GP::ScrollSpeedY() } * elapsed);
     }
-    if (mpsc.y > GP::ScreenSizeInGame().y - GP::ScrollBoundary()) {
-        getGame()->moveCam(sf::Vector2f { 0, GP::ScrllSpeed() } * elapsed);
+    if (tps.y > GP::ScreenSizeInGame().y - GP::ScrollBoundary()) {
+        float const f = (tps.y > GP::ScreenSizeInGame().y) ? 2.0f : 1.0f;
+
+        getGame()->moveCam(sf::Vector2f { 0, GP::ScrollSpeedY() } * f * elapsed);
     }
 }
 

@@ -13,7 +13,7 @@ public:
     {
     }
 
-    sf::Vector2f getBeamCenterPosition();
+    sf::Vector2f getTargetPosition();
 
 private:
     std::shared_ptr<JamTemplate::SmartAnimation> m_animation;
