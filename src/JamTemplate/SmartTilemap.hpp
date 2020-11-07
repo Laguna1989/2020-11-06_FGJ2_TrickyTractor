@@ -1,6 +1,7 @@
 ﻿#ifndef JAMTEMPLATE_TILEMAP_HPP_GUARD
 #define JAMTEMPLATE_TILEMAP_HPP_GUARD
 
+#include "../Collider.hpp"
 #include "SmartObject.hpp"
 #include "tileson.h"
 #include <SFML/Graphics.hpp>
@@ -51,6 +52,8 @@ public:
 
 private:
     std::unique_ptr<tson::Map> m_map;
+    // Map from object layer name to vector of objects, all rectangular.
+    std::map<std::string, std::vector<Rect>> m_objectGroups;
     mutable std::vector<std::unique_ptr<sf::Sprite>> m_tileSprites;
 
     sf::Vector2f m_position;

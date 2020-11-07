@@ -1,7 +1,9 @@
 ﻿#ifndef GAME_STATE_GAME_HPP_INCLUDEGUARD
 #define GAME_STATE_GAME_HPP_INCLUDEGUARD
 
+#include "Collider.hpp"
 #include "JamTemplate/GameState.hpp"
+#include "JamTemplate/ObjectGroup.hpp"
 #include "Target.hpp"
 #include <Box2D/Box2D.h>
 #include <iostream>
@@ -10,7 +12,8 @@
 // fwd decls
 namespace JamTemplate {
 class SmartShape;
-}
+class SmartTilemap;
+} // namespace JamTemplate
 
 class Hud;
 
@@ -25,6 +28,8 @@ private:
     std::shared_ptr<JamTemplate::SmartShape> m_background;
     std::shared_ptr<JamTemplate::SmartShape> m_overlay;
     std::shared_ptr<Target> m_target;
+    std::shared_ptr<JamTemplate::ObjectGroup<Collider>> m_colliders;
+    std::shared_ptr<JamTemplate::SmartTilemap> m_tilemap;
 
     std::shared_ptr<b2World> m_world;
 

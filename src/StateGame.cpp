@@ -4,7 +4,9 @@
 #include "JamTemplate/Game.hpp"
 #include "JamTemplate/SmartShape.hpp"
 #include "JamTemplate/SmartSprite.hpp"
+#include "JamTemplate/SmartTilemap.hpp"
 #include "JamTemplate/TweenAlpha.hpp"
+#include <SmartTilemap.hpp>
 
 void StateGame::doCreate()
 {
@@ -28,6 +30,13 @@ void StateGame::doCreate()
     tw->setSkipFrames();
     add(tw);
 
+    // TODO: Add object group for colliders here (m_colliders)
+    m_colliders = std::make_shared<JamTemplate::ObjectGroup<Collider>>();
+
+    m_tilemap = std::make_shared<JamTemplate::SmartTilemap>(
+        std::filesystem::path("assets/tricky-tractor-level-0.json"));
+    m_tilemap->setScreenSizeHint(GP::ScreenSizeInGame(), getGame());
+
     doCreateInternal();
     add(m_hud);
 
@@ -45,6 +54,7 @@ void StateGame::doCreateInternal() { }
 void StateGame::doInternalUpdate(float const elapsed)
 {
     m_overlay->update(elapsed);
+    m_tilemap->update(elapsed);
 
     int32 velocityIterations = 6;
     int32 positionIterations = 2;
@@ -54,6 +64,7 @@ void StateGame::doInternalUpdate(float const elapsed)
 void StateGame::doInternalDraw() const
 {
     m_background->draw(getGame()->getRenderTarget());
+    m_tilemap->draw(getGame()->getRenderTarget());
     drawObjects();
     m_overlay->draw(getGame()->getRenderTarget());
 }

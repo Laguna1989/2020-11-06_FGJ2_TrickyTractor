@@ -36,6 +36,15 @@ SmartTilemap::SmartTilemap(std::filesystem::path const& path)
                 TextureManager::get(tilesetName), sf::IntRect(i * ts.x, j * ts.y, ts.x, ts.y)));
         }
     }
+    for (auto& layer : m_map->getLayers()) {
+        const std::string currentGroupName = layer.getName();
+        for (auto& obj : layer.getObjects()) {
+            // FIXME: Use Conversions::stuff
+            Rect collider { sf::Vector2f(obj.getPosition().x, obj.getPosition().y),
+                sf::Vector2f(obj.getSize().x, obj.getSize().y), obj.getRotation() };
+            m_objectGroups[currentGroupName].push_back(collider);
+        }
+    }
 }
 
 void SmartTilemap::doDraw(std::shared_ptr<sf::RenderTarget> const sptr) const
@@ -48,7 +57,7 @@ void SmartTilemap::doDraw(std::shared_ptr<sf::RenderTarget> const sptr) const
 
     auto g = m_gamePtr.lock();
 
-    for (auto const& layer : m_map->getLayers()) {
+    for (auto& layer : m_map->getLayers()) {
         if (layer.getType() == tson::LayerType::TileLayer) {
 
             for (auto& [pos, tile] : layer.getTileObjects()) {
@@ -87,8 +96,23 @@ void SmartTilemap::doDraw(std::shared_ptr<sf::RenderTarget> const sptr) const
                 sptr->draw(*m_tileSprites.at(id));
             }
         }
+
+        sf::RectangleShape shape(sf::Vector2f(1.0f, 1.0f));
+        for (auto& objLayer : m_objectGroups) {
+            for (auto& obj : objLayer.second) {
+                shape.setSize(obj.sizeDiagonal);
+                shape.setPosition(obj.position);
+                shape.rotate(obj.rotation);
+                shape.setOutlineColor(JamTemplate::Random::getRandomColor());
+                shape.setFillColor(sf::Color::Transparent);
+                shape.setOutlineThickness(2.0f);
+                sptr->draw(shape);
+            }
+        }
     }
 }
+// TODO: public std::map<std::string, std::vector<Collider>> getObjectLayers() + Ne Notiz, dass das
+// refaktoriert gehört
 
 void SmartTilemap::doDrawFlash(std::shared_ptr<sf::RenderTarget> const sptr) const { }
 void SmartTilemap::doDrawShadow(std::shared_ptr<sf::RenderTarget> const sptr) const { }
