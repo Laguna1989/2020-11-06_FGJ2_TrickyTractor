@@ -36,6 +36,7 @@ private:
     std::shared_ptr<b2World> m_world;
 
     std::shared_ptr<JamTemplate::SmartShape> m_endZone;
+    std::shared_ptr<JamTemplate::SmartSprite> m_vignette;
 
     int m_levelID;
 
