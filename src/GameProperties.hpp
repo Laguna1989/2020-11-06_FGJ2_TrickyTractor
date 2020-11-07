@@ -1,6 +1,7 @@
 ﻿#ifndef GAME_GAMEPROPERTIES_HPP_INCLUDEGUARD
 #define GAME_GAMEPROPERTIES_HPP_INCLUDEGUARD
 
+#include <Box2D/Dynamics/b2Body.h>
 #include <SFML/Graphics/Color.hpp>
 #include <string>
 
@@ -27,6 +28,12 @@ public:
 
     static float GravityStrength() { return 10.0f; }
     static float TractorBeamStrength() { return 10.0f; }
+
+    static const b2BodyDef defaultColliderDef()
+    {
+        const b2BodyDef retVal {};
+        return retVal;
+    }
 };
 
 #endif
