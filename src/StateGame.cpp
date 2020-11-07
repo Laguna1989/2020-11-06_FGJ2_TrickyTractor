@@ -27,6 +27,7 @@ void StateGame::doCreate()
     m_background->update(0.0f);
 
     m_overlay = std::make_shared<SmartShape>();
+    m_overlay->setIgnoreCamMovement(true);
     m_overlay->makeRect(sf::Vector2f { w, h });
     m_overlay->setColor(sf::Color { 0, 0, 0 });
     m_overlay->update(0);
