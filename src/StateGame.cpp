@@ -1,5 +1,6 @@
 ﻿#include "StateGame.hpp"
 #include "Collider.hpp"
+#include "Collision.hpp"
 #include "Game.hpp"
 #include "GameProperties.hpp"
 #include "Hud.hpp"
@@ -7,6 +8,7 @@
 #include "MathHelper.hpp"
 #include "SmartShape.hpp"
 #include "SmartSprite.hpp"
+#include "StateMenu.hpp"
 #include "TweenAlpha.hpp"
 #include <SmartTilemap.hpp>
 
@@ -92,6 +94,9 @@ void StateGame::doInternalUpdate(float const elapsed)
         m_endZone->update(elapsed);
     }
     doScrolling(elapsed);
+    if (JamTemplate::Collision::BoundingBoxTest(m_endZone, m_target->getTarget())) {
+        getGame()->switchState(std::make_shared<StateMenu>());
+    }
 }
 void StateGame::doScrolling(float const elapsed)
 {
