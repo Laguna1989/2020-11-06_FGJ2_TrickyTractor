@@ -86,6 +86,11 @@ public:
     }
 
     static float GetMenuLevelTextDistance() { return 14; }
+    static unsigned int MaxCrystalDamage()
+    {
+        return 4;
+    } // Must have at least this many + 1 crystal frames
+    static float InvulnerabilityAge() { return 2.0f; }
 };
 
 #endif
