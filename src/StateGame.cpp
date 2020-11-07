@@ -71,6 +71,9 @@ void StateGame::doCreateInternal() { }
 void StateGame::doInternalUpdate(float const elapsed)
 {
     m_overlay->update(elapsed);
+    if (JamTemplate::InputManager::justReleased(GP::KeyToggleDrawObjectGroups())) {
+        m_tilemap->toggleObjectGroupVisibility();
+    }
     m_tilemap->update(elapsed);
 
     int32 velocityIterations = 6;
