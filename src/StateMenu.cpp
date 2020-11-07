@@ -21,7 +21,7 @@ void StateMenu::doCreate()
 
     m_background = std::make_shared<JamTemplate::SmartShape>();
     m_background->makeRect({ w, h });
-    m_background->setColor(GP::PaletteColor1());
+    m_background->setColor(GP::PaletteBackground());
     m_background->update(0.0f);
 
     m_text_Title = std::make_shared<JamTemplate::SmartText>();
@@ -49,10 +49,10 @@ void StateMenu::doCreate()
 
     m_text_Credits = std::make_shared<JamTemplate::SmartText>();
     m_text_Credits->loadFont("assets/font.ttf");
-    m_text_Credits->setCharacterSize(10U);
+    m_text_Credits->setCharacterSize(8U);
     m_text_Credits->setText("Created by @BloodyOrange, @adkiem,\n@Synchronleuchter and "
                             "@Laguna_999\nfor #JamFranken2020\n2020-11-06");
-    m_text_Credits->setPosition({ 4, 245 });
+    m_text_Credits->setPosition({ 4, 250 });
     m_text_Credits->setColor(GP::PaletteColor5());
     m_text_Credits->SetTextAlign(JamTemplate::SmartText::TextAlign::LEFT);
     m_text_Credits->update(0.0f);
@@ -113,6 +113,7 @@ void StateMenu::doCreate()
     m_currentLevel = 0;
 
     for (auto i = 0U; i != GP::getLevelList().size(); ++i) {
+
         auto st = std::make_shared<SmartText>();
         st->loadFont("assets/font.ttf");
         st->setText(GP::getLevelList().at(i).second);
@@ -123,7 +124,11 @@ void StateMenu::doCreate()
             255 - static_cast<int>(std::fabs(i - m_currentLevel)) * 200, 0, 255));
         st->setColor(col);
         st->update(0.0f);
-
+        if (i == m_currentLevel) {
+            st->setShadow(GP::PaletteFontShadow(), sf::Vector2f { 1, 1 });
+        } else {
+            st->setShadowActive(false);
+        }
         m_levelNames.push_back(st);
     }
 }
@@ -171,6 +176,12 @@ void StateMenu::doInternalUpdate(float const elapsed)
                     m_levelNames.at(i)->getPosition()
                         - sf::Vector2f { 0, GP::GetMenuLevelTextDistance() - posOffset });
                 add(twp);
+
+                if (i == m_currentLevel) {
+                    m_levelNames.at(i)->setShadow(GP::PaletteFontShadow(), sf::Vector2f { 1, 1 });
+                } else {
+                    m_levelNames.at(i)->setShadowActive(false);
+                }
             }
         }
 
@@ -198,6 +209,12 @@ void StateMenu::doInternalUpdate(float const elapsed)
                     m_levelNames.at(i)->getPosition()
                         + sf::Vector2f { 0, GP::GetMenuLevelTextDistance() - posOffset });
                 add(twp);
+
+                if (i == m_currentLevel) {
+                    m_levelNames.at(i)->setShadow(GP::PaletteFontShadow(), sf::Vector2f { 1, 1 });
+                } else {
+                    m_levelNames.at(i)->setShadowActive(false);
+                }
             }
         }
 
