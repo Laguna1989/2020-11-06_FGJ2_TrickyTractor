@@ -38,7 +38,8 @@ public:
         return retVal;
     }
     static const std::string ColliderLayerName() { return "Terrain: Kollisionen"; }
-static float GravityStrength() { return 50.0f; }
+
+    static float GravityStrength() { return 50.0f; }
     static float TractorBeamWidth() { return 48.0f; }
     static float TractorBeamStrengthY() { return 130.0f; }
     static float TractorBeamStrengthX() { return 180.0f; }
@@ -47,6 +48,9 @@ static float GravityStrength() { return 50.0f; }
     static sf::Vector2f WindowSizeOutGame() { return sf::Vector2f { 720, 900 }; }
     static float Zoom() { return 3.0f; }
     static sf::Vector2f ScreenSizeInGame() { return WindowSizeOutGame() / Zoom(); }
+
+    static float ScrollBoundary() { return 60; }
+    static float ScrllSpeed() { return 30; }
 };
 
 #endif

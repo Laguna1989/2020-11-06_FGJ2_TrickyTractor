@@ -78,6 +78,20 @@ void StateGame::doScrolling(float const elapsed)
     auto const mpsc
         = sf::Vector2f { JamTemplate::MathHelper::clamp(mps.x, 0.0f, GP::ScreenSizeInGame().x),
               JamTemplate::MathHelper::clamp(mps.y, 0.0f, GP::ScreenSizeInGame().y) };
+
+    if (mpsc.x < GP::ScrollBoundary()) {
+        getGame()->moveCam(sf::Vector2f { -GP::ScrllSpeed(), 0 } * elapsed);
+    }
+    if (mpsc.x > GP::ScreenSizeInGame().x - GP::ScrollBoundary()) {
+        getGame()->moveCam(sf::Vector2f { GP::ScrllSpeed(), 0 } * elapsed);
+    }
+
+    if (mpsc.y < GP::ScrollBoundary()) {
+        getGame()->moveCam(sf::Vector2f { 0, -GP::ScrllSpeed() } * elapsed);
+    }
+    if (mpsc.y > GP::ScreenSizeInGame().y - GP::ScrollBoundary()) {
+        getGame()->moveCam(sf::Vector2f { 0, GP::ScrllSpeed() } * elapsed);
+    }
 }
 
 // simple camera movement, just follow beam

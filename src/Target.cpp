@@ -48,7 +48,8 @@ void Target::doUpdate(float const elapsed)
     m_animation->update(elapsed);
     handleInput(elapsed);
 
-    m_beamShape->setPosition(sf::Vector2f { m_beamPosX - GP::TractorBeamWidth() / 2, 0 });
+    m_beamShape->setPosition(
+        sf::Vector2f { m_beamPosX - GP::TractorBeamWidth() / 2, getGame()->getCamOffset().y });
     // m_beamShape->setPosition(m_animation->getPosition());
     m_beamShape->update(elapsed);
     m_beamBorderShape->update(elapsed);
@@ -97,11 +98,13 @@ void Target::doDraw() const
     m_animation->draw(getGame()->getRenderTarget());
     m_beamShape->draw(getGame()->getRenderTarget());
 
-    m_beamBorderShape->setPosition(sf::Vector2f { m_beamPosX - GP::TractorBeamWidth() / 2, 0 });
+    m_beamBorderShape->setPosition(
+        sf::Vector2f { m_beamPosX - GP::TractorBeamWidth() / 2, getGame()->getCamOffset().y });
     m_beamBorderShape->update(0.0f);
     m_beamBorderShape->draw(getGame()->getRenderTarget());
 
-    m_beamBorderShape->setPosition(sf::Vector2f { m_beamPosX + GP::TractorBeamWidth() / 2, 0 });
+    m_beamBorderShape->setPosition(
+        sf::Vector2f { m_beamPosX + GP::TractorBeamWidth() / 2, getGame()->getCamOffset().y });
     m_beamBorderShape->update(0.0f);
     m_beamBorderShape->draw(getGame()->getRenderTarget());
 }
