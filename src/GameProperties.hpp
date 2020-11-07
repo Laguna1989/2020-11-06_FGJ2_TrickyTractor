@@ -8,6 +8,8 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <string>
+#include <utility>
+#include <vector>
 
 class GP {
 public:
@@ -28,7 +30,7 @@ public:
     static sf::Color PaletteFlashGreen() { return sf::Color { 51, 143, 63 }; }
     static sf::Color PaletteFlashRed() { return sf::Color { 143, 33, 33 }; }
 
-    static std::string GameName() { return "TrickyTractor"; }
+    static std::string GameName() { return "Tricky\nTractor"; }
 
     static const sf::Keyboard::Key KeyToggleDrawObjectGroups() { return sf::Keyboard::F5; };
     static const b2BodyDef defaultColliderDef(const Rect& rect)
@@ -67,6 +69,23 @@ public:
     static sf::Color StrongFlashColor() { return sf::Color { 255, 250, 163 }; }
     static float WeakFlashDuration() { return 0.3f; }
     static sf::Color WeakFlashColor() { return sf::Color { 225, 180, 35, 64 }; }
+    static std::vector<std::pair<std::string, std::string>> getLevelList()
+    {
+        std::vector<std::pair<std::string, std::string>> levelList {};
+        levelList.push_back(std::make_pair<std::string, std::string>(
+            "assets/tricky-tractor-level-0.json", "The Beginning"));
+        levelList.push_back(std::make_pair<std::string, std::string>(
+            "assets/tricky-tractor-level-0.json", "Duplicate 1"));
+        levelList.push_back(std::make_pair<std::string, std::string>(
+            "assets/tricky-tractor-level-0.json", "Duplicate 2"));
+        levelList.push_back(std::make_pair<std::string, std::string>(
+            "assets/tricky-tractor-level-0.json", "Duplicat 3"));
+        levelList.push_back(std::make_pair<std::string, std::string>(
+            "assets/tricky-tractor-level-10.json", "Are you serious?"));
+        return levelList;
+    }
+
+    static float GetMenuLevelTextDistance() { return 14; }
 };
 
 #endif

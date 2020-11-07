@@ -64,6 +64,7 @@ void Target::doUpdate(float const elapsed)
     auto vy = getB2Body()->GetLinearVelocity().y;
     vx *= GP::TargetAirFrictionX();
     getB2Body()->SetLinearVelocity(b2Vec2 { vx, vy });
+    getB2Body()->SetAngularDamping(0.5f);
     m_glow->setPosition(m_animation->getPosition() - sf::Vector2f { 30, 30 });
     m_glow->update(elapsed);
 }

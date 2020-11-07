@@ -14,6 +14,7 @@ Collider::Collider(std::shared_ptr<b2World> world, const Rect& rectDef)
     fixtureDef.shape = &dynamicBox;
     fixtureDef.density = 1.0f;
     fixtureDef.friction = 0.9f;
+    fixtureDef.restitution = 0.7f;
 
     getB2Body()->CreateFixture(&fixtureDef);
 }

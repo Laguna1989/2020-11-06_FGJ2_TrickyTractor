@@ -20,7 +20,7 @@ class Hud;
 
 class StateGame : public JamTemplate::GameState {
 public:
-    StateGame() = default;
+    StateGame(int levelID);
 
 protected:
     std::shared_ptr<Hud> m_hud;
@@ -36,6 +36,8 @@ private:
     std::shared_ptr<b2World> m_world;
 
     std::shared_ptr<JamTemplate::SmartShape> m_endZone;
+
+    int m_levelID;
 
     void doCreate() override;
 
