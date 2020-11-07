@@ -2,6 +2,7 @@
 #define GAME_GAMEPROPERTIES_HPP_INCLUDEGUARD
 
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <string>
 
 class GP {
@@ -25,8 +26,13 @@ public:
 
     static std::string GameName() { return "TrickyTractor"; }
 
-    static float GravityStrength() { return 10.0f; }
-    static float TractorBeamStrength() { return 10.0f; }
+    static float GravityStrength() { return 40.0f; }
+    static float TractorBeamStrengthY() { return 80.0f; }
+    static float TractorBeamStrengthX() { return 80.0f; }
+
+    static sf::Vector2f WindowSizeOutGame() { return sf::Vector2f { 720, 900 }; }
+    static float Zoom() { return 3.0f; }
+    static sf::Vector2f ScreenSizeInGame() { return WindowSizeOutGame() / Zoom(); }
 };
 
 #endif

@@ -1,8 +1,9 @@
 ﻿#ifndef GAME_TARGET_HPP_INCLUDEGUARD
 #define GAME_TARGET_HPP_INCLUDEGUARD
 
-#include "JamTemplate/Box2DObject.hpp"
-#include "JamTemplate/SmartAnimation.hpp"
+#include "Box2DObject.hpp"
+#include "SmartAnimation.hpp"
+#include "SmartShape.hpp"
 #include <string>
 
 class Target : public JamTemplate::Box2DObject {
@@ -14,10 +15,16 @@ public:
 
 private:
     std::shared_ptr<JamTemplate::SmartAnimation> m_animation;
+    std::shared_ptr<JamTemplate::SmartShape> m_beamShape;
+    mutable std::shared_ptr<JamTemplate::SmartShape> m_beamBorderShape;
+    float m_beamPosX;
 
     void doUpdate(float const /*elapsed*/) override;
     void doDraw() const override;
     void doCreate() override;
+
+    void handleInput(float const elapsed);
+    void setBeamStrength(float const v);
 };
 
 #endif
