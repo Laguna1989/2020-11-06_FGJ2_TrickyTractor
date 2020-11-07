@@ -1,5 +1,6 @@
 ﻿#include "StateGame.hpp"
 #include "Collider.hpp"
+#include "Collision.hpp"
 #include "Game.hpp"
 #include "GameProperties.hpp"
 #include "Hud.hpp"
@@ -7,6 +8,7 @@
 #include "MathHelper.hpp"
 #include "SmartShape.hpp"
 #include "SmartSprite.hpp"
+#include "StateMenu.hpp"
 #include "TweenAlpha.hpp"
 #include <SmartTilemap.hpp>
 
@@ -25,6 +27,7 @@ void StateGame::doCreate()
     m_background->update(0.0f);
 
     m_overlay = std::make_shared<SmartShape>();
+    m_overlay->setIgnoreCamMovement(true);
     m_overlay->makeRect(sf::Vector2f { w, h });
     m_overlay->setColor(sf::Color { 0, 0, 0 });
     m_overlay->update(0);
@@ -53,11 +56,19 @@ void StateGame::doCreate()
     // get start position
     sf::Vector2f startPosition;
     auto const other = m_tilemap->getObjectGroups().at(GP::OtherLayerName());
-    if (!other.empty()) {
-        startPosition = other.at(0).position;
-        std::cout << startPosition.x << " " << startPosition.y << "\n";
+    for (auto const r : other) {
+        if (r.m_type == "start") {
+            startPosition = r.position;
+            // std::cout << startPosition.x << " " << startPosition.y << "\n";
+        } else if (r.m_type == "end") {
+            m_endZone = std::make_shared<JamTemplate::SmartShape>();
+            m_endZone->makeRect(r.sizeDiagonal);
+            m_endZone->setColor(sf::Color { 255, 255, 255, 100 });
+            m_endZone->setPosition(r.position);
+            m_endZone->setRotation(r.rotation);
+        }
     }
-    getGame()->setCamOffset(startPosition);
+    getGame()->setCamOffset(startPosition - GP::ScreenSizeInGame() / 2.0f);
 
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
@@ -80,7 +91,13 @@ void StateGame::doInternalUpdate(float const elapsed)
     int32 positionIterations = 2;
     m_world->Step(elapsed, velocityIterations, positionIterations);
 
+    if (m_endZone) {
+        m_endZone->update(elapsed);
+    }
     doScrolling(elapsed);
+    if (JamTemplate::Collision::BoundingBoxTest(m_endZone, m_target->getTarget())) {
+        getGame()->switchState(std::make_shared<StateMenu>());
+    }
 }
 void StateGame::doScrolling(float const elapsed)
 {
@@ -119,5 +136,8 @@ void StateGame::doInternalDraw() const
     m_background->draw(getGame()->getRenderTarget());
     m_tilemap->draw(getGame()->getRenderTarget());
     drawObjects();
+    if (m_endZone) {
+        m_endZone->draw(getGame()->getRenderTarget());
+    }
     m_overlay->draw(getGame()->getRenderTarget());
 }
