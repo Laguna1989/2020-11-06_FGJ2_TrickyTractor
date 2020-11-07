@@ -100,7 +100,7 @@ void SmartTilemap::doDraw(std::shared_ptr<sf::RenderTarget> const sptr) const
             for (auto& obj : objLayer.second) {
                 shape.setSize(obj.sizeDiagonal);
                 shape.setPosition(obj.position);
-                shape.rotate(obj.rotation);
+                shape.setRotation(obj.rotation);
                 shape.setOutlineColor(JamTemplate::Random::getRandomColor());
                 shape.setFillColor(sf::Color::Transparent);
                 shape.setOutlineThickness(2.0f);
