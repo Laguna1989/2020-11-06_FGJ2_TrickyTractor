@@ -1,6 +1,9 @@
 ﻿#ifndef GAME_GAMEPROPERTIES_HPP_INCLUDEGUARD
 #define GAME_GAMEPROPERTIES_HPP_INCLUDEGUARD
 
+#include "Conversions.hpp"
+#include "MathHelper.hpp"
+#include "Rect.hpp"
 #include <Box2D/Dynamics/b2Body.h>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -27,18 +30,20 @@ public:
 
     static std::string GameName() { return "TrickyTractor"; }
 
-    static const b2BodyDef defaultColliderDef()
+    static const b2BodyDef defaultColliderDef(const Rect& rect)
     {
-        const b2BodyDef retVal {};
+        b2BodyDef retVal {};
+        retVal.position = JamTemplate::C::vec(rect.position);
+        retVal.angle = JamTemplate::MathHelper::deg2rad(rect.rotation);
         return retVal;
     }
-    static float GravityStrength() { return 50.0f; }
+    static const std::string ColliderLayerName() { return "Terrain: Kollisionen"; }
+static float GravityStrength() { return 50.0f; }
     static float TractorBeamWidth() { return 48.0f; }
     static float TractorBeamStrengthY() { return 130.0f; }
     static float TractorBeamStrengthX() { return 180.0f; }
     static float MouseMovementXToBeamConversion() { return 70.0f; }
     static float TargetAirFrictionX() { return 0.992f; }
-
     static sf::Vector2f WindowSizeOutGame() { return sf::Vector2f { 720, 900 }; }
     static float Zoom() { return 3.0f; }
     static sf::Vector2f ScreenSizeInGame() { return WindowSizeOutGame() / Zoom(); }

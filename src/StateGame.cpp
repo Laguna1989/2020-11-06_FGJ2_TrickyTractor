@@ -1,4 +1,5 @@
 ﻿#include "StateGame.hpp"
+#include "Collider.hpp"
 #include "Game.hpp"
 #include "GameProperties.hpp"
 #include "Hud.hpp"
@@ -7,6 +8,7 @@
 #include "SmartShape.hpp"
 #include "SmartSprite.hpp"
 #include "TweenAlpha.hpp"
+#include <SmartTilemap.hpp>
 
 void StateGame::doCreate()
 {
@@ -30,10 +32,23 @@ void StateGame::doCreate()
     tw->setSkipFrames();
     add(tw);
 
+    m_tilemap = std::make_shared<JamTemplate::SmartTilemap>(
+        std::filesystem::path("assets/tricky-tractor-level-0.json"));
+    m_tilemap->setScreenSizeHint(GP::ScreenSizeInGame(), getGame());
+
     doCreateInternal();
     add(m_hud);
 
     m_world = std::make_shared<b2World>(b2Vec2 { 0, GP::GravityStrength() });
+
+    m_colliders = std::make_shared<JamTemplate::ObjectGroup<Collider>>();
+    auto const lol = m_tilemap->getObjectGroups().at(GP::ColliderLayerName());
+    for (auto& rect : lol) {
+        auto coll = std::make_shared<Collider>(m_world, rect);
+        add(coll);
+        m_colliders->push_back(coll);
+    }
+    add(m_colliders);
 
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
@@ -47,6 +62,7 @@ void StateGame::doCreateInternal() { }
 void StateGame::doInternalUpdate(float const elapsed)
 {
     m_overlay->update(elapsed);
+    m_tilemap->update(elapsed);
 
     int32 velocityIterations = 6;
     int32 positionIterations = 2;
@@ -66,11 +82,11 @@ void StateGame::doScrolling(float const elapsed)
 
 // simple camera movement, just follow beam
 // getGame()->setCamOffset(beampos);
-}
 
 void StateGame::doInternalDraw() const
 {
     m_background->draw(getGame()->getRenderTarget());
+    m_tilemap->draw(getGame()->getRenderTarget());
     drawObjects();
     m_overlay->draw(getGame()->getRenderTarget());
 }

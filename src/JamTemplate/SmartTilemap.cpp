@@ -36,6 +36,13 @@ SmartTilemap::SmartTilemap(std::filesystem::path const& path)
                 TextureManager::get(tilesetName), sf::IntRect(i * ts.x, j * ts.y, ts.x, ts.y)));
         }
     }
+    for (auto& layer : m_map->getLayers()) {
+        const std::string currentGroupName = layer.getName();
+        for (auto& obj : layer.getObjects()) {
+            Rect collider { C::vec(obj.getPosition()), C::vec(obj.getSize()), obj.getRotation() };
+            m_objectGroups[currentGroupName].push_back(collider);
+        }
+    }
 }
 
 void SmartTilemap::doDraw(std::shared_ptr<sf::RenderTarget> const sptr) const
@@ -48,7 +55,7 @@ void SmartTilemap::doDraw(std::shared_ptr<sf::RenderTarget> const sptr) const
 
     auto g = m_gamePtr.lock();
 
-    for (auto const& layer : m_map->getLayers()) {
+    for (auto& layer : m_map->getLayers()) {
         if (layer.getType() == tson::LayerType::TileLayer) {
 
             for (auto& [pos, tile] : layer.getTileObjects()) {
@@ -85,6 +92,19 @@ void SmartTilemap::doDraw(std::shared_ptr<sf::RenderTarget> const sptr) const
                 auto const pixelPosForTile = tilePos + posOffset;
                 m_tileSprites.at(id)->setPosition(pixelPosForTile);
                 sptr->draw(*m_tileSprites.at(id));
+            }
+        }
+
+        sf::RectangleShape shape(sf::Vector2f(1.0f, 1.0f));
+        for (auto& objLayer : m_objectGroups) {
+            for (auto& obj : objLayer.second) {
+                shape.setSize(obj.sizeDiagonal);
+                shape.setPosition(obj.position);
+                shape.setRotation(obj.rotation);
+                shape.setOutlineColor(JamTemplate::Random::getRandomColor());
+                shape.setFillColor(sf::Color::Transparent);
+                shape.setOutlineThickness(2.0f);
+                sptr->draw(shape);
             }
         }
     }
