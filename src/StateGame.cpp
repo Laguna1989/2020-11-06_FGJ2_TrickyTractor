@@ -1,10 +1,12 @@
 ﻿#include "StateGame.hpp"
+#include "Game.hpp"
 #include "GameProperties.hpp"
 #include "Hud.hpp"
-#include "JamTemplate/Game.hpp"
-#include "JamTemplate/SmartShape.hpp"
-#include "JamTemplate/SmartSprite.hpp"
-#include "JamTemplate/TweenAlpha.hpp"
+#include "InputManager.hpp"
+#include "MathHelper.hpp"
+#include "SmartShape.hpp"
+#include "SmartSprite.hpp"
+#include "TweenAlpha.hpp"
 
 void StateGame::doCreate()
 {
@@ -49,6 +51,21 @@ void StateGame::doInternalUpdate(float const elapsed)
     int32 velocityIterations = 6;
     int32 positionIterations = 2;
     m_world->Step(elapsed, velocityIterations, positionIterations);
+
+    doScrolling(elapsed);
+}
+void StateGame::doScrolling(float const elapsed)
+{
+
+    auto const mps = JamTemplate::InputManager::getMousePositionScreen();
+
+    auto const mpsc
+        = sf::Vector2f { JamTemplate::MathHelper::clamp(mps.x, 0.0f, GP::ScreenSizeInGame().x),
+              JamTemplate::MathHelper::clamp(mps.y, 0.0f, GP::ScreenSizeInGame().y) };
+}
+
+// simple camera movement, just follow beam
+// getGame()->setCamOffset(beampos);
 }
 
 void StateGame::doInternalDraw() const

@@ -48,20 +48,19 @@ void Target::doUpdate(float const elapsed)
     m_animation->update(elapsed);
     handleInput(elapsed);
 
-    m_beamShape->setPosition(sf::Vector2f { m_beamPosX, 0 });
+    m_beamShape->setPosition(sf::Vector2f { m_beamPosX - GP::TractorBeamWidth() / 2, 0 });
     // m_beamShape->setPosition(m_animation->getPosition());
     m_beamShape->update(elapsed);
     m_beamBorderShape->update(elapsed);
 
     auto vx = getB2Body()->GetLinearVelocity().x;
     auto vy = getB2Body()->GetLinearVelocity().y;
-    vx *= 0.995;
+    vx *= GP::TargetAirFrictionX();
     getB2Body()->SetLinearVelocity(b2Vec2 { vx, vy });
 }
 
 void Target::handleInput(float const elapsed)
 {
-
     m_beamPosXLast = m_beamPosX;
     m_beamPosX = JamTemplate::InputManager::getMousePositionWorld().x;
 
@@ -98,11 +97,11 @@ void Target::doDraw() const
     m_animation->draw(getGame()->getRenderTarget());
     m_beamShape->draw(getGame()->getRenderTarget());
 
-    m_beamBorderShape->setPosition(sf::Vector2f { m_beamPosX, 0 });
+    m_beamBorderShape->setPosition(sf::Vector2f { m_beamPosX - GP::TractorBeamWidth() / 2, 0 });
     m_beamBorderShape->update(0.0f);
     m_beamBorderShape->draw(getGame()->getRenderTarget());
 
-    m_beamBorderShape->setPosition(sf::Vector2f { m_beamPosX + GP::TractorBeamWidth(), 0 });
+    m_beamBorderShape->setPosition(sf::Vector2f { m_beamPosX + GP::TractorBeamWidth() / 2, 0 });
     m_beamBorderShape->update(0.0f);
     m_beamBorderShape->draw(getGame()->getRenderTarget());
 }
@@ -112,4 +111,9 @@ void Target::setBeamStrength(float const v)
     sf::Uint8 v2 = static_cast<sf::Uint8>(100.0f * JamTemplate::MathHelper::clamp(v, 0.0f, 1.0f));
 
     m_beamShape->setColor(sf::Color { 255, 255, 255, v2 });
+}
+
+sf::Vector2f Target::getBeamCenterPosition()
+{
+    return sf::Vector2f { m_beamPosX, JamTemplate::InputManager::getMousePositionWorld().y };
 }

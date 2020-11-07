@@ -34,6 +34,8 @@ private:
 
     virtual void doInternalUpdate(float const elapsed) override;
     virtual void doInternalDraw() const override;
+
+    void doScrolling(float const elapsed);
 };
 
 #endif
