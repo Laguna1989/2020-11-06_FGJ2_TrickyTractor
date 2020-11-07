@@ -47,6 +47,7 @@ public:
     static float TractorBeamStrengthX() { return 180.0f; }
     static float MouseMovementXToBeamConversion() { return 70.0f; }
     static float TargetAirFrictionX() { return 0.992f; }
+    static float AllowedCollisionSpeed() { return 6000.0f; }
 
     static sf::Vector2f WindowSizeOutGame() { return sf::Vector2f { 720, 900 }; }
     static float Zoom() { return 3.0f; }
@@ -56,6 +57,16 @@ public:
     static float ScrollBoundary() { return 87.0f; }
     static float ScrollSpeedX() { return 45.0f; }
     static float ScrollSpeedY() { return 70.0f; }
+
+    static float StrongShakeDuration() { return 1.0f; }
+    static float StrongShakeIntensity() { return 1.5f; }
+    static float WeakShakeDuration() { return 0.3f; }
+    static float WeakShakeIntensity() { return 0.4f; }
+
+    static float StrongFlashDuration() { return 0.8f; }
+    static sf::Color StrongFlashColor() { return sf::Color { 255, 250, 163 }; }
+    static float WeakFlashDuration() { return 0.3f; }
+    static sf::Color WeakFlashColor() { return sf::Color { 225, 180, 35, 64 }; }
 };
 
 #endif

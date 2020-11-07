@@ -5,6 +5,7 @@
 #include "JamTemplate/GameState.hpp"
 #include "JamTemplate/ObjectGroup.hpp"
 #include "Target.hpp"
+#include "TargetContactListener.hpp"
 #include <Box2D/Box2D.h>
 #include <iostream>
 #include <memory>
@@ -30,6 +31,7 @@ private:
     std::shared_ptr<Target> m_target;
     std::shared_ptr<JamTemplate::ObjectGroup<Collider>> m_colliders;
     std::shared_ptr<JamTemplate::SmartTilemap> m_tilemap;
+    std::shared_ptr<TargetContactListener> m_contactListener;
 
     std::shared_ptr<b2World> m_world;
 
@@ -43,6 +45,7 @@ private:
     virtual void doInternalDraw() const override;
 
     void doScrolling(float const elapsed);
+    void StateGame::handleDamage(float damage);
 };
 
 #endif

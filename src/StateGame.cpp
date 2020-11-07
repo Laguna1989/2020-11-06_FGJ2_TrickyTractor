@@ -75,6 +75,11 @@ void StateGame::doCreate()
     bodyDef.type = b2_dynamicBody;
     bodyDef.position = JamTemplate::C::vec(startPosition);
     m_target = std::make_shared<Target>(m_world, &bodyDef);
+
+    m_contactListener
+        = std::make_shared<TargetContactListener>([this](float d) { handleDamage(d); });
+    m_world->SetContactListener(m_contactListener.get());
+
     add(m_target);
 }
 
@@ -162,4 +167,15 @@ void StateGame::doInternalDraw() const
         m_endZone->draw(getGame()->getRenderTarget());
     }
     m_overlay->draw(getGame()->getRenderTarget());
+}
+
+void StateGame::handleDamage(float damage)
+{
+    if (damage > GP::AllowedCollisionSpeed()) {
+        getGame()->shake(GP::StrongShakeDuration(), GP::StrongShakeIntensity());
+        m_overlay->flash(GP::StrongFlashDuration(), GP::StrongFlashColor());
+    } else if (damage > GP::AllowedCollisionSpeed() / 2.0f) {
+        getGame()->shake(GP::WeakShakeDuration(), GP::WeakShakeIntensity());
+        m_overlay->flash(GP::WeakFlashDuration(), GP::WeakFlashColor());
+    }
 }
