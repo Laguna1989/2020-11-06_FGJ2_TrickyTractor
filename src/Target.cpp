@@ -42,7 +42,7 @@ void Target::doCreate()
 
     m_beamBorderShape = std::make_shared<JamTemplate::SmartShape>();
     m_beamBorderShape->makeRect(sf::Vector2f { 1, GP::ScreenSizeInGame().y });
-
+    m_beamBorderShape->setColor(sf::Color { 213, 214, 219, 100 });
     m_glow = std::make_shared<JamTemplate::SmartSprite>();
     m_glow->loadSprite("#g#60#80");
     m_glow->setColor(GP::PaletteColorGlow());

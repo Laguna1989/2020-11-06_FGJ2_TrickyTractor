@@ -215,13 +215,13 @@ void StateGame::doCreate()
     m_sndAlarm3.setBuffer(m_sndBufAlarm3);
     m_sndCollision.setBuffer(m_sndBufCollision);
 
-    m_sndAlarm1.setVolume(80);
-    m_sndAlarm2.setVolume(80);
-    m_sndAlarm3.setVolume(80);
+    m_sndAlarm1.setVolume(25);
+    m_sndAlarm2.setVolume(25);
+    m_sndAlarm3.setVolume(25);
 
     // m_sndAlarm1.setLoop(true);
-    m_sndAlarm2.setLoop(true);
-    m_sndAlarm3.setLoop(true);
+    /*m_sndAlarm2.setLoop(true);
+    m_sndAlarm3.setLoop(true);*/
 
     if (m_timer <= 0.1f) {
         getGame()->m_music.openFromFile("assets/sounds/song_ingame_1.ogg");
