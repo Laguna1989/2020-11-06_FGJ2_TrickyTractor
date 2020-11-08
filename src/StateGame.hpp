@@ -42,6 +42,7 @@ private:
     std::shared_ptr<JamTemplate::SmartSprite> m_vignette;
 
     std::shared_ptr<JamTemplate::ParticleSystem<JamTemplate::SmartSprite, 100>> m_particlesDust;
+    std::shared_ptr<JamTemplate::ParticleSystem<JamTemplate::SmartShape, 100>> m_particlesBreak;
 
     int m_levelID;
     float m_lastCollisionAge = 0.0f;

@@ -24,7 +24,7 @@ public:
         }
     };
 
-    void Fire(unsigned int num = 0)
+    void Fire(unsigned int num = 1)
     {
         for (auto i = 0U; i != num; ++i) {
             m_resetCallback(m_particles.at(m_currentIndex));

@@ -12,6 +12,7 @@
 #include "StateMenu.hpp"
 #include "Timer.hpp"
 #include "TweenAlpha.hpp"
+#include "TweenPosition.hpp"
 #include "TweenScale.hpp"
 
 StateGame::StateGame(int levelID, float timer)
@@ -126,9 +127,32 @@ void StateGame::doCreate()
             add(tws);
         });
     add(m_particlesDust);
-
     auto t = std::make_shared<JamTemplate::Timer>(0.025f, [this]() { m_particlesDust->Fire(1); });
     add(t);
+
+    m_particlesBreak = std::make_shared<JamTemplate::ParticleSystem<JamTemplate::SmartShape, 100>>(
+        []() {
+            auto const s = std::make_shared<JamTemplate::SmartShape>();
+            s->makeRect({ 2, 2 });
+            s->setColor(sf::Color { 246, 118, 5 });
+            return s;
+        },
+        [this](std::shared_ptr<JamTemplate::SmartShape> s) {
+            s->setPosition(m_target->getPosition());
+
+            auto const start = m_target->getPosition();
+            auto const end = start
+                + JamTemplate::Random::getRandomPointin(sf::FloatRect { -100, -100, 200, 200 });
+            auto twp
+                = JamTemplate::TweenPosition<JamTemplate::SmartShape>::create(s, 1.0f, start, end);
+            add(twp);
+
+            auto twa = JamTemplate::TweenAlpha<JamTemplate::SmartShape>::create(s, 0.125f, 255, 0);
+            twa->setStartDelay(0.2f);
+            twa->setSkipFrames(2);
+            add(twa);
+        });
+    add(m_particlesBreak);
 }
 
 void StateGame::doCreateInternal() { }
@@ -145,6 +169,9 @@ void StateGame::doInternalUpdate(float const elapsed)
     m_textTimer->update(elapsed);
     if (JamTemplate::InputManager::justReleased(GP::KeyToggleDrawObjectGroups())) {
         m_tilemap->toggleObjectGroupVisibility();
+    }
+    if (JamTemplate::InputManager::justReleased(sf::Keyboard::B)) {
+        m_particlesBreak->Fire(20);
     }
 
     int32 velocityIterations = 6;
@@ -244,12 +271,15 @@ void StateGame::handleDamage(float damage)
         getGame()->shake(GP::StrongShakeDuration(), GP::StrongShakeIntensity());
         m_overlay->flash(GP::StrongFlashDuration(), GP::StrongFlashColor());
         size_t newDamage = m_target->getDamage() + 1;
+        m_particlesBreak->Fire(20);
         if (newDamage > GP::MaxCrystalDamage()) {
             m_deathAge = getAge();
+
             return;
         }
         m_target->setDamage(newDamage);
     } else if (damage > GP::AllowedCollisionSpeed() / 2.0f) {
+        m_particlesBreak->Fire(10);
         getGame()->shake(GP::WeakShakeDuration(), GP::WeakShakeIntensity());
         m_overlay->flash(GP::WeakFlashDuration(), GP::WeakFlashColor());
     }
