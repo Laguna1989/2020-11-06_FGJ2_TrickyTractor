@@ -8,6 +8,7 @@ namespace JamTemplate {
 
 class SmartText;
 class SmartShape;
+class SmartSprite;
 
 } // namespace JamTemplate
 
@@ -25,6 +26,7 @@ private:
     std::shared_ptr<SmartText> m_text_Credits;
 
     std::shared_ptr<JamTemplate::SmartShape> m_overlay;
+    mutable std::shared_ptr<JamTemplate::SmartSprite> m_arrow;
 
     std::vector<std::shared_ptr<SmartText>> m_levelNames;
     int m_currentLevel;

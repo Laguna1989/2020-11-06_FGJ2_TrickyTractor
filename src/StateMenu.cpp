@@ -53,7 +53,9 @@ void StateMenu::doCreate()
     m_text_Explanation2 = std::make_shared<JamTemplate::SmartText>();
     m_text_Explanation2->loadFont("assets/font.ttf");
     m_text_Explanation2->setCharacterSize(12U);
-    m_text_Explanation2->setText("[L]ock Mouse: ON\nLastTime: 0.00");
+
+    m_text_Explanation2->setText("[L]ock Mouse: ON\nLastTime:"
+        + JamTemplate::MathHelper::floatToStringWithXDigits(m_lastTime, 2));
     m_text_Explanation2->setPosition({ wC, 200 });
     m_text_Explanation2->setColor(GP::PaletteColor5());
     m_text_Explanation2->update(0.0f);
@@ -77,6 +79,9 @@ void StateMenu::doCreate()
     m_overlay->makeRect(sf::Vector2f { w, h });
     m_overlay->setColor(sf::Color { 0, 0, 0 });
     m_overlay->update(0);
+
+    m_arrow = std::make_shared<JamTemplate::SmartSprite>();
+    m_arrow->loadSprite("assets/arrow.png");
 
     using tp = JamTemplate::TweenPosition<JamTemplate::SmartText>;
     using ta = JamTemplate::TweenAlpha<JamTemplate::SmartText>;
@@ -285,6 +290,16 @@ void StateMenu::doInternalDraw() const
     for (auto const& st : m_levelNames) {
         st->draw(getGame()->getRenderTarget());
     }
+
+    m_arrow->setPosition(sf::Vector2f { 40, 88 });
+    m_arrow->setScale({ 1.0f, 1.0f });
+    m_arrow->update(0.0f);
+    m_arrow->draw(getGame()->getRenderTarget());
+
+    m_arrow->setPosition(sf::Vector2f { 40, 128 });
+    m_arrow->setScale({ 1.0f, -1.0f });
+    m_arrow->update(0.0f);
+    m_arrow->draw(getGame()->getRenderTarget());
 
     m_text_Explanation->draw(getGame()->getRenderTarget());
     m_text_Explanation2->draw(getGame()->getRenderTarget());
