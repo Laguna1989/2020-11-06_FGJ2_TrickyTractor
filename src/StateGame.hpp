@@ -39,6 +39,7 @@ private:
     std::shared_ptr<b2World> m_world;
 
     std::shared_ptr<JamTemplate::SmartShape> m_endZone;
+    std::vector<std::shared_ptr<JamTemplate::SmartShape>> m_damagingZones;
     std::shared_ptr<JamTemplate::SmartSprite> m_vignette;
 
     std::shared_ptr<JamTemplate::ParticleSystem<JamTemplate::SmartSprite, 100>> m_particlesDust;
