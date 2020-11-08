@@ -94,14 +94,13 @@ void StateGame::doCreate()
             damZone->setPosition(r.position);
             damZone->setRotation(r.rotation);
             m_damagingZones.push_back(damZone);
-        }
-        else if (r.m_type == "blocking"{
+        } else if (r.m_type == "blocking") {
             auto z = std::make_shared<JamTemplate::SmartShape>();
             z->makeRect(r.sizeDiagonal);
-            z->setColor(sf::Color { 64, 255, 0, 255 });
+            z->setColor(sf::Color { 68, 112, 45, 20 });
             z->setPosition(r.position);
             z->setRotation(r.rotation);
-            m_damagingZones.push_back(z);
+            m_blockingZones.push_back(z);
         }
     }
     getGame()->setCamOffset(startPosition - GP::ScreenSizeInGame() / 2.0f);
@@ -198,9 +197,11 @@ void StateGame::doInternalUpdate(float const elapsed)
                 getGame()->switchState(std::make_shared<StateMenu>(m_timer));
             }
         }
+        m_target->setVerticalBeam(!playerIsInBlockingZone());
     } else {
         handleDeath(elapsed);
     }
+
     m_background->update(elapsed);
     m_overlay->update(elapsed);
     m_vignette->update(elapsed);
@@ -299,8 +300,6 @@ void StateGame::handleDamage(float damage)
         return;
     }
 
-    m_target->setVerticalBeam(!playerIsInBlockingZone());
-
     bool damagingZoneOverride = false;
     for (auto damZone : m_damagingZones) {
         if (JamTemplate::Collision::BoundingBoxTest(damZone, m_target->getTarget())) {
@@ -358,9 +357,10 @@ bool StateGame::playerIsInBlockingZone()
 {
     for (auto z : m_blockingZones) {
         if (JamTemplate::Collision::BoundingBoxTest(z, m_target->getTarget())) {
+            // std::cout << "overlap\n";
             return true;
         }
     }
-
+    // std::cout << "NO overlap\n";
     return false;
 }
