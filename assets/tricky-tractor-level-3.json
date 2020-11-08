@@ -238,7 +238,7 @@
          "name":"Terrain: Kollisionen",
          "objects":[
                 {
-                 "height":552,
+                 "height":588,
                  "id":349,
                  "name":"",
                  "rotation":0,
@@ -246,7 +246,7 @@
                  "visible":true,
                  "width":12,
                  "x":0,
-                 "y":48
+                 "y":12
                 }, 
                 {
                  "height":12,
@@ -1094,6 +1094,17 @@
                  "width":72,
                  "x":324,
                  "y":264
+                }, 
+                {
+                 "height":36,
+                 "id":447,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":12,
+                 "x":468,
+                 "y":12
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -1102,7 +1113,7 @@
          "y":0
         }],
  "nextlayerid":7,
- "nextobjectid":447,
+ "nextobjectid":448,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.4.2",

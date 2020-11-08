@@ -39,10 +39,10 @@ void Target::doCreate()
     m_beamShape->loadSprite("assets/beam.png");
     m_beamShape->setColor(sf::Color { 255, 255, 255, 0 });
     m_beamShape->setScale(sf::Vector2f { 1.0f, GP::ScreenSizeInGame().y });
-
     m_beamBorderShape = std::make_shared<JamTemplate::SmartShape>();
     m_beamBorderShape->makeRect(sf::Vector2f { 1, GP::ScreenSizeInGame().y });
-    m_beamBorderShape->setColor(sf::Color { 213, 214, 219, 100 });
+    m_beamBorderShape->setColor(sf::Color::Transparent);
+
     m_glow = std::make_shared<JamTemplate::SmartSprite>();
     m_glow->loadSprite("#g#60#80");
     m_glow->setColor(GP::PaletteColorGlow());
@@ -120,6 +120,7 @@ void Target::handleInput(float const elapsed)
     }
     if (JamTemplate::InputManager::pressed(sf::Mouse::Left)) {
         setBeamStrength(1.0f);
+        m_beamBorderShape->setColor(sf::Color::Transparent);
 
         using C = JamTemplate::Collision;
         if (C::BoundingBoxTest(m_animation, m_beamShape)) {
@@ -140,6 +141,8 @@ void Target::handleInput(float const elapsed)
             // std::cout << "NO overlap\n";
         }
     } else {
+        if (m_beamBorderShape)
+            m_beamBorderShape->setColor(sf::Color { 213, 214, 219, 50 });
         setBeamStrength(0.0f);
     }
 }

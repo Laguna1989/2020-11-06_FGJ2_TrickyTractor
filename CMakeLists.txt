@@ -71,6 +71,7 @@ if (WIN32)
 	target_link_libraries(JamTemplate debug sfml-system-d )
 	target_link_libraries(JamTemplate debug sfml-window-d )
 	target_link_libraries(JamTemplate debug sfml-graphics-d )
+	target_link_libraries(JamTemplate debug sfml-audio-d )
 endif()
 
 target_link_libraries(JamTemplate Box2D)
