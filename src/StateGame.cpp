@@ -159,57 +159,60 @@ void StateGame::doCreateInternal() { }
 
 void StateGame::doInternalUpdate(float const elapsed)
 {
-    m_timer += elapsed;
+    if (!m_isDead) {
+        m_timer += elapsed;
 
+        if (JamTemplate::InputManager::justReleased(GP::KeyToggleDrawObjectGroups())) {
+            m_tilemap->toggleObjectGroupVisibility();
+        }
+
+        int32 velocityIterations = 6;
+        int32 positionIterations = 2;
+        m_world->Step(elapsed, velocityIterations, positionIterations);
+
+        if (JamTemplate::InputManager::justPressed(sf::Keyboard::Escape)) {
+            getGame()->switchState(std::make_shared<StateMenu>(0.0f));
+        }
+
+        doScrolling(elapsed);
+        if (JamTemplate::Collision::BoundingBoxTest(m_endZone, m_target->getTarget())) {
+            int nextLevelID = m_levelID + 1;
+            if (nextLevelID != GP::getLevelList().size()) {
+                getGame()->switchState(std::make_shared<StateGame>(nextLevelID, m_timer));
+            } else {
+                getGame()->switchState(std::make_shared<StateMenu>(m_timer));
+            }
+        }
+    } else {
+        handleDeath(elapsed);
+    }
     m_background->update(elapsed);
     m_overlay->update(elapsed);
     m_vignette->update(elapsed);
+    m_tilemap->update(elapsed);
 
     std::string const str = JamTemplate::MathHelper::floatToStringWithXDigits(m_timer, 2);
     m_textTimer->setText("Time: " + str);
     m_textTimer->update(elapsed);
-    if (JamTemplate::InputManager::justReleased(GP::KeyToggleDrawObjectGroups())) {
-        m_tilemap->toggleObjectGroupVisibility();
-    }
-    if (JamTemplate::InputManager::justReleased(sf::Keyboard::B)) {
-        m_particlesBreak->Fire(20);
-    }
-
-    int32 velocityIterations = 6;
-    int32 positionIterations = 2;
-    m_world->Step(elapsed, velocityIterations, positionIterations);
 
     if (m_endZone) {
         m_endZone->update(elapsed);
     }
-
-    doScrolling(elapsed);
-    if (JamTemplate::Collision::BoundingBoxTest(m_endZone, m_target->getTarget())) {
-        int nextLevelID = m_levelID + 1;
-        if (nextLevelID != GP::getLevelList().size()) {
-            getGame()->switchState(std::make_shared<StateGame>(nextLevelID, m_timer));
-        } else {
-            getGame()->switchState(std::make_shared<StateMenu>(m_timer));
-        }
-    }
-    if (m_deathAge > 0.0f) {
-        handleDeath(elapsed);
-    }
-    m_tilemap->update(elapsed);
 }
 
 void StateGame::doScrolling(float const elapsed)
 {
-    if (m_deathAge >= 0.0f)
+    if (m_isDead) {
         return;
+    }
     auto const mps = JamTemplate::InputManager::getMousePositionScreen();
     auto const tpw = m_target->getTargetPosition();
     auto const tps = getGame()->getRenderWindow()->mapCoordsToPixel(tpw, *getGame()->getView())
         / static_cast<int>(GP::Zoom());
 
     auto const mpsc
-        = sf::Vector2f { JamTemplate::MathHelper::clamp(mps.x, 0.0f, GP::ScreenSizeInGame().x),
-              JamTemplate::MathHelper::clamp(mps.y, 0.0f, GP::ScreenSizeInGame().y) };
+        = sf::Vector2f { JamTemplate::MathHelper::clamp(mps.x, -50.0f, GP::ScreenSizeInGame().x),
+              JamTemplate::MathHelper::clamp(mps.y, -50.0f, GP::ScreenSizeInGame().y) };
 
     if (mpsc.x < GP::ScrollBoundary()) {
         getGame()->moveCam(sf::Vector2f { -GP::ScrollSpeedX(), 0 } * elapsed);
@@ -264,8 +267,9 @@ void StateGame::doInternalDraw() const
 
 void StateGame::handleDamage(float damage)
 {
-    if (m_deathAge >= 0.0f)
+    if (m_isDead) {
         return;
+    }
     if (getAge() < m_lastCollisionAge + GP::InvulnerabilityAge()) {
         return;
     }
@@ -276,7 +280,7 @@ void StateGame::handleDamage(float damage)
         size_t newDamage = m_target->getDamage() + 1;
         m_particlesBreak->Fire(20);
         if (newDamage > GP::MaxCrystalDamage()) {
-            m_deathAge = getAge();
+            m_isDead = true;
 
             return;
         }

@@ -46,7 +46,7 @@ private:
 
     int m_levelID;
     float m_lastCollisionAge = 0.0f;
-    float m_deathAge = -1.0f; // negative == not dead yet
+    float m_isDead = false;
     bool m_alreadyTweening = false;
 
     float m_timer;
