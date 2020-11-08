@@ -1,14 +1,12 @@
 ﻿#ifndef JAMTEMPLATE_SMARTOBJECT_HPP_INCLUDEGUARD
 #define JAMTEMPLATE_SMARTOBJECT_HPP_INCLUDEGUARD
 
+#include "Lerp.hpp"
+#include "Random.hpp"
+#include <SFML/Graphics.hpp>
 #include <iostream>
 #include <memory>
 #include <string>
-
-#include <SFML/Graphics.hpp>
-
-#include "Lerp.hpp"
-#include "Random.hpp"
 
 namespace JamTemplate {
 class SmartObject {

@@ -59,7 +59,7 @@ void StateGame::doCreate()
     m_tilemap = std::make_shared<JamTemplate::SmartTilemap>(
         std::filesystem::path(GP::getLevelList().at(m_levelID).first));
     m_tilemap->setScreenSizeHint(GP::ScreenSizeInGame(), getGame());
-
+    m_tilemap->update(0.0f);
     doCreateInternal();
     add(m_hud);
 
@@ -88,18 +88,20 @@ void StateGame::doCreate()
             m_endZone->setPosition(r.position);
             m_endZone->setRotation(r.rotation);
         } else if (r.m_type == "damaging") {
-            auto damZone = std::make_shared<JamTemplate::SmartShape>();
-            damZone->makeRect(r.sizeDiagonal);
-            damZone->setColor(sf::Color { 255, 64, 0, 0 });
-            damZone->setPosition(r.position);
-            damZone->setRotation(r.rotation);
-            m_damagingZones.push_back(damZone);
+            auto z = std::make_shared<JamTemplate::SmartShape>();
+            z->makeRect(r.sizeDiagonal);
+            z->setColor(sf::Color { 255, 64, 0, 0 });
+            z->setPosition(r.position);
+            z->setRotation(r.rotation);
+            z->update(0.0f);
+            m_damagingZones.push_back(z);
         } else if (r.m_type == "blocking") {
             auto z = std::make_shared<JamTemplate::SmartShape>();
             z->makeRect(r.sizeDiagonal);
             z->setColor(sf::Color { 68, 112, 45, 20 });
             z->setPosition(r.position);
             z->setRotation(r.rotation);
+            z->update(0.0f);
             m_blockingZones.push_back(z);
         }
     }
@@ -122,6 +124,7 @@ void StateGame::doCreate()
     m_vignette->loadSprite("#v#" + std::to_string(static_cast<int>(GP::ScreenSizeInGame().x)) + "#"
         + std::to_string(static_cast<int>(GP::ScreenSizeInGame().y)));
     m_vignette->setIgnoreCamMovement(true);
+    m_vignette->update(0.0f);
 
     m_particlesDust = std::make_shared<JamTemplate::ParticleSystem<JamTemplate::SmartSprite, 100>>(
         []() {
