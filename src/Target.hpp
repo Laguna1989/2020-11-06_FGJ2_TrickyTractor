@@ -20,6 +20,8 @@ public:
 
     std::shared_ptr<JamTemplate::SmartAnimation> getTarget() { return m_animation; }
 
+    void setVerticalBeam(bool active) { m_vertivalBeamActive = active; };
+
 private:
     std::shared_ptr<JamTemplate::SmartSprite> m_glow;
     std::shared_ptr<JamTemplate::SmartAnimation> m_animation;
@@ -29,7 +31,10 @@ private:
     mutable std::shared_ptr<JamTemplate::SmartShape> m_beamBorderShape;
     float m_beamPosX;
     float m_beamPosXLast;
-    size_t m_damage = 0;
+    size_t m_damage { 0 };
+
+    bool m_vertivalBeamActive { true };
+
     void doUpdate(float const /*elapsed*/) override;
     void doDraw() const override;
     void doCreate() override;

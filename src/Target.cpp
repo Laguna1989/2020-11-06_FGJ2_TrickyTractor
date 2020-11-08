@@ -116,10 +116,12 @@ void Target::handleInput(float const elapsed)
                 = JamTemplate::MathHelper::clamp(deltaX * GP::MouseMovementXToBeamConversion(),
                     -GP::TractorBeamStrengthX(), GP::TractorBeamStrengthX());
 
+            float const forceY = m_vertivalBeamActive
+                ? -GP::TractorBeamStrengthY() * getB2Body()->GetMass()
+                : 0.0f;
+
             getB2Body()->ApplyForceToCenter(
-                b2Vec2 { deltaXClamped * getB2Body()->GetMass(),
-                    -GP::TractorBeamStrengthY() * getB2Body()->GetMass() },
-                true);
+                b2Vec2 { deltaXClamped * getB2Body()->GetMass(), forceY }, true);
 
         } else {
             // std::cout << "NO overlap\n";

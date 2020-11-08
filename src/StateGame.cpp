@@ -95,6 +95,14 @@ void StateGame::doCreate()
             damZone->setRotation(r.rotation);
             m_damagingZones.push_back(damZone);
         }
+        else if (r.m_type == "blocking"{
+            auto z = std::make_shared<JamTemplate::SmartShape>();
+            z->makeRect(r.sizeDiagonal);
+            z->setColor(sf::Color { 64, 255, 0, 255 });
+            z->setPosition(r.position);
+            z->setRotation(r.rotation);
+            m_damagingZones.push_back(z);
+        }
     }
     getGame()->setCamOffset(startPosition - GP::ScreenSizeInGame() / 2.0f);
 
@@ -208,6 +216,9 @@ void StateGame::doInternalUpdate(float const elapsed)
     for (auto damagingZone : m_damagingZones) {
         damagingZone->update(elapsed);
     }
+    for (auto z : m_blockingZones) {
+        z->update(elapsed);
+    }
 }
 
 void StateGame::doScrolling(float const elapsed)
@@ -270,6 +281,9 @@ void StateGame::doInternalDraw() const
     for (auto damagingZone : m_damagingZones) {
         damagingZone->draw(getGame()->getRenderTarget());
     }
+    for (auto z : m_blockingZones) {
+        z->draw(getGame()->getRenderTarget());
+    }
     m_vignette->draw(getGame()->getRenderTarget());
     m_overlay->draw(getGame()->getRenderTarget());
 
@@ -284,6 +298,8 @@ void StateGame::handleDamage(float damage)
     if (getAge() < m_lastCollisionAge + GP::InvulnerabilityAge()) {
         return;
     }
+
+    m_target->setVerticalBeam(!playerIsInBlockingZone());
 
     bool damagingZoneOverride = false;
     for (auto damZone : m_damagingZones) {
@@ -336,4 +352,15 @@ void StateGame::handleDeath(float const elapsed)
         add(tw);
     }
     m_alreadyTweening = true;
+}
+
+bool StateGame::playerIsInBlockingZone()
+{
+    for (auto z : m_blockingZones) {
+        if (JamTemplate::Collision::BoundingBoxTest(z, m_target->getTarget())) {
+            return true;
+        }
+    }
+
+    return false;
 }

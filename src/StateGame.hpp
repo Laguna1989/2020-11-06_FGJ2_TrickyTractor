@@ -40,6 +40,8 @@ private:
 
     std::shared_ptr<JamTemplate::SmartShape> m_endZone;
     std::vector<std::shared_ptr<JamTemplate::SmartShape>> m_damagingZones;
+    std::vector<std::shared_ptr<JamTemplate::SmartShape>> m_blockingZones;
+
     std::shared_ptr<JamTemplate::SmartSprite> m_vignette;
 
     std::shared_ptr<JamTemplate::ParticleSystem<JamTemplate::SmartSprite, 100>> m_particlesDust;
@@ -62,6 +64,8 @@ private:
     void doScrolling(float const elapsed);
     void handleDamage(float damage);
     void handleDeath(float const elapsed);
+
+    bool playerIsInBlockingZone();
 };
 
 #endif
