@@ -131,6 +131,7 @@ void StateGame::doCreate()
             auto const s = std::make_shared<JamTemplate::SmartSprite>();
             s->loadSprite("#g#16#255");
             s->setColor(GP::PaletteColorGlow());
+            s->setPosition({ -500, -500 });
             return s;
         },
         [this](std::shared_ptr<JamTemplate::SmartSprite> s) {
@@ -150,6 +151,7 @@ void StateGame::doCreate()
     m_particlesBreak = std::make_shared<JamTemplate::ParticleSystem<JamTemplate::SmartShape, 100>>(
         []() {
             auto const s = std::make_shared<JamTemplate::SmartShape>();
+            s->setPosition({ -500, -500 });
             s->makeRect({ 2, 2 });
             s->setColor(sf::Color { 246, 118, 5 });
             return s;
