@@ -87,6 +87,13 @@ void StateGame::doCreate()
             m_endZone->setColor(sf::Color { 255, 255, 255, 100 });
             m_endZone->setPosition(r.position);
             m_endZone->setRotation(r.rotation);
+        } else if (r.m_type == "damaging") {
+            auto damZone = std::make_shared<JamTemplate::SmartShape>();
+            damZone->makeRect(r.sizeDiagonal);
+            damZone->setColor(sf::Color { 255, 64, 0, 0 });
+            damZone->setPosition(r.position);
+            damZone->setRotation(r.rotation);
+            m_damagingZones.push_back(damZone);
         }
     }
     getGame()->setCamOffset(startPosition - GP::ScreenSizeInGame() / 2.0f);
@@ -181,6 +188,9 @@ void StateGame::doInternalUpdate(float const elapsed)
     if (m_endZone) {
         m_endZone->update(elapsed);
     }
+    for (auto damagingZone : m_damagingZones) {
+        damagingZone->update(elapsed);
+    }
     doScrolling(elapsed);
     if (JamTemplate::Collision::BoundingBoxTest(m_endZone, m_target->getTarget())) {
         int nextLevelID = m_levelID + 1;
@@ -190,6 +200,7 @@ void StateGame::doInternalUpdate(float const elapsed)
             getGame()->switchState(std::make_shared<StateMenu>(m_timer));
         }
     }
+
     if (m_deathAge > 0.0f) {
         handleDeath(elapsed);
     }
@@ -253,6 +264,9 @@ void StateGame::doInternalDraw() const
     if (m_endZone) {
         m_endZone->draw(getGame()->getRenderTarget());
     }
+    for (auto damagingZone : m_damagingZones) {
+        damagingZone->draw(getGame()->getRenderTarget());
+    }
     m_vignette->draw(getGame()->getRenderTarget());
     m_overlay->draw(getGame()->getRenderTarget());
 
@@ -267,7 +281,15 @@ void StateGame::handleDamage(float damage)
         return;
     }
 
-    if (damage > GP::AllowedCollisionSpeed()) {
+    bool damagingZoneOverride = false;
+    for (auto damZone : m_damagingZones) {
+        if (JamTemplate::Collision::BoundingBoxTest(damZone, m_target->getTarget())) {
+            damagingZoneOverride = true;
+            break;
+        }
+    }
+
+    if (damage > GP::AllowedCollisionSpeed() || damagingZoneOverride) {
         getGame()->shake(GP::StrongShakeDuration(), GP::StrongShakeIntensity());
         m_overlay->flash(GP::StrongFlashDuration(), GP::StrongFlashColor());
         size_t newDamage = m_target->getDamage() + 1;
