@@ -219,7 +219,7 @@ void StateGame::doInternalUpdate(float const elapsed)
         }
     }
 
-    if (m_deathAge > 0.0f) {
+    if (m_isDead) {
         handleDeath(elapsed);
     }
     m_tilemap->update(elapsed);
