@@ -12,7 +12,11 @@
 #include "TweenAlpha.hpp"
 #include <SmartTilemap.hpp>
 
-StateGame::StateGame(int levelID) { m_levelID = levelID; }
+StateGame::StateGame(int levelID, float timer)
+    : m_levelID { levelID }
+    , m_timer { timer }
+{
+}
 
 void StateGame::doCreate()
 {
@@ -37,6 +41,17 @@ void StateGame::doCreate()
     auto tw = TweenAlpha<SmartShape>::create(m_overlay, 0.5f, sf::Uint8 { 255 }, sf::Uint8 { 0 });
     tw->setSkipFrames();
     add(tw);
+
+    m_textTimer = std::make_shared<JamTemplate::SmartText>();
+    m_textTimer->loadFont("assets/font.ttf");
+    m_textTimer->setCharacterSize(12U);
+    m_textTimer->setText("Time: 0.00");
+    m_textTimer->setPosition({ 8.0f, 6.0f });
+    m_textTimer->setColor(GP::PaletteColor1());
+    m_textTimer->update(0.0f);
+    m_textTimer->SetTextAlign(JamTemplate::SmartText::TextAlign::LEFT);
+    m_textTimer->setShadow(GP::PaletteFontShadow(), sf::Vector2f { 2, 2 });
+    m_textTimer->setIgnoreCamMovement(true);
 
     m_tilemap = std::make_shared<JamTemplate::SmartTilemap>(
         std::filesystem::path(GP::getLevelList().at(m_levelID).first));
@@ -119,6 +134,11 @@ void StateGame::doInternalUpdate(float const elapsed)
     m_background->update(elapsed);
     m_overlay->update(elapsed);
     m_vignette->update(elapsed);
+
+    m_timer += elapsed;
+    std::string const str = JamTemplate::MathHelper::floatToStringWithXDigits(m_timer, 2);
+    m_textTimer->setText("Time: " + str);
+    m_textTimer->update(elapsed);
     if (JamTemplate::InputManager::justReleased(GP::KeyToggleDrawObjectGroups())) {
         m_tilemap->toggleObjectGroupVisibility();
     }
@@ -134,9 +154,9 @@ void StateGame::doInternalUpdate(float const elapsed)
     if (JamTemplate::Collision::BoundingBoxTest(m_endZone, m_target->getTarget())) {
         int nextLevelID = m_levelID + 1;
         if (nextLevelID != GP::getLevelList().size()) {
-            getGame()->switchState(std::make_shared<StateGame>(nextLevelID));
+            getGame()->switchState(std::make_shared<StateGame>(nextLevelID, m_timer));
         } else {
-            getGame()->switchState(std::make_shared<StateMenu>());
+            getGame()->switchState(std::make_shared<StateMenu>(m_timer));
         }
     }
     if (m_deathAge > 0.0f) {
@@ -204,6 +224,8 @@ void StateGame::doInternalDraw() const
     }
     m_vignette->draw(getGame()->getRenderTarget());
     m_overlay->draw(getGame()->getRenderTarget());
+
+    m_textTimer->draw(getGame()->getRenderTarget());
 }
 
 void StateGame::handleDamage(float damage)

@@ -11,7 +11,10 @@
 #include "JamTemplate/TweenScale.hpp"
 #include "StateGame.hpp"
 
-StateMenu::StateMenu() = default;
+StateMenu::StateMenu(float lastTime)
+    : m_lastTime { lastTime }
+{
+}
 
 void StateMenu::doCreate()
 {
@@ -50,7 +53,7 @@ void StateMenu::doCreate()
     m_text_Explanation2 = std::make_shared<JamTemplate::SmartText>();
     m_text_Explanation2->loadFont("assets/font.ttf");
     m_text_Explanation2->setCharacterSize(12U);
-    m_text_Explanation2->setText("[L]ock Mouse: ON");
+    m_text_Explanation2->setText("[L]ock Mouse: ON\nLastTime: 0.00");
     m_text_Explanation2->setPosition({ wC, 200 });
     m_text_Explanation2->setColor(GP::PaletteColor5());
     m_text_Explanation2->update(0.0f);
@@ -183,7 +186,8 @@ void StateMenu::doInternalUpdate(float const elapsed)
                 m_grabCursor = !m_grabCursor;
                 getGame()->getRenderWindow()->setMouseCursorGrabbed(m_grabCursor);
                 std::string const str = (m_grabCursor ? "ON" : "OFF");
-                m_text_Explanation2->setText("[L]ock Mouse: " + str);
+                m_text_Explanation2->setText("[L]ock Mouse: " + str + "\nLastTime: "
+                    + JamTemplate::MathHelper::floatToStringWithXDigits(m_lastTime, 2));
                 m_inputDeadTimer = GP::MenuInputDeadTime();
 
                 m_text_Explanation2->flash(GP::MenuInputDeadTime());

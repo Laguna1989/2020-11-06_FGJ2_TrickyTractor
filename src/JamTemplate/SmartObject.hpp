@@ -111,7 +111,8 @@ protected:
 
     sf::Vector2f getCamOffset() const
     {
-        return (m_ignoreCamMovement ? m_CamOffset : sf::Vector2f { 0.0f, 0.0f });
+        sf::Vector2f ret { m_CamOffset };
+        return (m_ignoreCamMovement ? ret : sf::Vector2f { 0.0f, 0.0f });
     }
     bool getIgnoreCamMovement() const { return m_ignoreCamMovement; }
 

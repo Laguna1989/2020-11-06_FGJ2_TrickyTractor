@@ -13,7 +13,7 @@ class SmartShape;
 class StateMenu : public JamTemplate::GameState {
 public:
     using SmartText = JamTemplate::SmartText;
-    StateMenu();
+    StateMenu(float lastTime = 0.0f);
 
 private:
     std::shared_ptr<JamTemplate::SmartShape> m_background;
@@ -28,6 +28,8 @@ private:
     std::vector<std::shared_ptr<SmartText>> m_levelNames;
     int m_currentLevel;
     float m_inputDeadTimer;
+
+    float m_lastTime;
 
     bool m_starting { false };
 

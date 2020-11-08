@@ -14,13 +14,14 @@
 namespace JamTemplate {
 class SmartShape;
 class SmartTilemap;
+class SmartText;
 } // namespace JamTemplate
 
 class Hud;
 
 class StateGame : public JamTemplate::GameState {
 public:
-    StateGame(int levelID);
+    StateGame(int levelID, float timer = 0.0f);
 
 protected:
     std::shared_ptr<Hud> m_hud;
@@ -32,6 +33,7 @@ private:
     std::shared_ptr<JamTemplate::ObjectGroup<Collider>> m_colliders;
     std::shared_ptr<JamTemplate::SmartTilemap> m_tilemap;
     std::shared_ptr<TargetContactListener> m_contactListener;
+    std::shared_ptr<JamTemplate::SmartText> m_textTimer;
 
     std::shared_ptr<b2World> m_world;
 
@@ -42,6 +44,8 @@ private:
     float m_lastCollisionAge = 0.0f;
     float m_deathAge = -1.0f; // negative == not dead yet
     bool m_alreadyTweening = false;
+
+    float m_timer;
 
     void doCreate() override;
 
