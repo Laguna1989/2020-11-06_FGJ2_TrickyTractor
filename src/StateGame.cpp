@@ -219,7 +219,7 @@ void StateGame::doCreate()
     m_sndAlarm2.setVolume(80);
     m_sndAlarm3.setVolume(80);
 
-    m_sndAlarm1.setLoop(true);
+    // m_sndAlarm1.setLoop(true);
     m_sndAlarm2.setLoop(true);
     m_sndAlarm3.setLoop(true);
 
@@ -394,7 +394,7 @@ void StateGame::handleDamage(float damage)
         }
         m_target->setDamage(newDamage);
 
-        if (m_target->getDamage() == 1) {
+        if (m_target->getDamage() == 2) {
             m_sndAlarm2.stop();
             m_sndAlarm3.stop();
             m_sndAlarm1.play();
