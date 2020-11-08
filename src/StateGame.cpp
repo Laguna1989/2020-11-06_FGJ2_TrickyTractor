@@ -159,11 +159,12 @@ void StateGame::doCreateInternal() { }
 
 void StateGame::doInternalUpdate(float const elapsed)
 {
+    m_timer += elapsed;
+
     m_background->update(elapsed);
     m_overlay->update(elapsed);
     m_vignette->update(elapsed);
 
-    m_timer += elapsed;
     std::string const str = JamTemplate::MathHelper::floatToStringWithXDigits(m_timer, 2);
     m_textTimer->setText("Time: " + str);
     m_textTimer->update(elapsed);
@@ -181,6 +182,7 @@ void StateGame::doInternalUpdate(float const elapsed)
     if (m_endZone) {
         m_endZone->update(elapsed);
     }
+
     doScrolling(elapsed);
     if (JamTemplate::Collision::BoundingBoxTest(m_endZone, m_target->getTarget())) {
         int nextLevelID = m_levelID + 1;
@@ -195,6 +197,7 @@ void StateGame::doInternalUpdate(float const elapsed)
     }
     m_tilemap->update(elapsed);
 }
+
 void StateGame::doScrolling(float const elapsed)
 {
     if (m_deathAge >= 0.0f)
@@ -298,18 +301,14 @@ void StateGame::handleDeath(float const elapsed)
         }
     }
 
-    // wait 1.5s
-    if (t <= m_deathAge + 1.5f) {
-        return;
-    }
     // scroll up + tween to black
-
     getGame()->moveCam(sf::Vector2f { 0, -GP::ScrollSpeedY() * elapsed });
     if (!m_alreadyTweening) {
+        m_particlesDust->kill();
         auto tw = JamTemplate::TweenAlpha<JamTemplate::SmartShape>::create(
-            m_overlay, 1.5f, sf::Uint8 { 0 }, sf::Uint8 { 255 });
+            m_overlay, 1.75f, sf::Uint8 { 0 }, sf::Uint8 { 255 });
         tw->addCompleteCallback(
-            [this]() { getGame()->switchState(std::make_shared<StateMenu>()); });
+            [this]() { getGame()->switchState(std::make_shared<StateMenu>(0.0f)); });
         tw->setSkipFrames();
         add(tw);
     }
