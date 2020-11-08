@@ -34,18 +34,30 @@ void StateMenu::doCreate()
     m_text_Title->update(0.0f);
     m_text_Title->setShadow(GP::PaletteFontShadow(), sf::Vector2f { 3, 3 });
 
-    m_test_Explanation = std::make_shared<JamTemplate::SmartText>();
-    m_test_Explanation->loadFont("assets/font.ttf");
-    m_test_Explanation->setCharacterSize(16U);
-    m_test_Explanation->setText("Press Space");
-    m_test_Explanation->setPosition({ wC, 210 });
-    m_test_Explanation->setColor(GP::PaletteColor4());
-    m_test_Explanation->update(0.0f);
-    auto const textWidth = m_test_Explanation->getLocalBounds().width;
-    auto const textHeight = m_test_Explanation->getLocalBounds().height;
-    m_test_Explanation->setOrigin(sf::Vector2f { textWidth / 2, textHeight / 2 });
-    m_test_Explanation->SetTextAlign(JamTemplate::SmartText::TextAlign::LEFT);
-    m_test_Explanation->setShadow(GP::PaletteFontShadow(), sf::Vector2f { 3, 3 });
+    m_text_Explanation = std::make_shared<JamTemplate::SmartText>();
+    m_text_Explanation->loadFont("assets/font.ttf");
+    m_text_Explanation->setCharacterSize(16U);
+    m_text_Explanation->setText("Press Space");
+    m_text_Explanation->setPosition({ wC, 150 });
+    m_text_Explanation->setColor(GP::PaletteColor4());
+    m_text_Explanation->update(0.0f);
+    auto textWidth = m_text_Explanation->getLocalBounds().width;
+    auto const textHeight = m_text_Explanation->getLocalBounds().height;
+    m_text_Explanation->setOrigin(sf::Vector2f { textWidth / 2, textHeight / 2 });
+    m_text_Explanation->SetTextAlign(JamTemplate::SmartText::TextAlign::LEFT);
+    m_text_Explanation->setShadow(GP::PaletteFontShadow(), sf::Vector2f { 3, 3 });
+
+    m_text_Explanation2 = std::make_shared<JamTemplate::SmartText>();
+    m_text_Explanation2->loadFont("assets/font.ttf");
+    m_text_Explanation2->setCharacterSize(12U);
+    m_text_Explanation2->setText("[L]ock Mouse: ON");
+    m_text_Explanation2->setPosition({ wC, 200 });
+    m_text_Explanation2->setColor(GP::PaletteColor5());
+    m_text_Explanation2->update(0.0f);
+    textWidth = m_text_Explanation2->getLocalBounds().width;
+    m_text_Explanation2->setOrigin(sf::Vector2f { textWidth / 2, textHeight / 2 });
+    m_text_Explanation2->SetTextAlign(JamTemplate::SmartText::TextAlign::LEFT);
+    m_text_Explanation2->setShadow(GP::PaletteFontShadow(), sf::Vector2f { 3, 3 });
 
     m_text_Credits = std::make_shared<JamTemplate::SmartText>();
     m_text_Credits->loadFont("assets/font.ttf");
@@ -80,15 +92,15 @@ void StateMenu::doCreate()
         add(ta1);
     }
     {
-        auto s2 = m_test_Explanation->getPosition() + sf::Vector2f { -500, 0 };
-        auto e2 = m_test_Explanation->getPosition();
+        auto s2 = m_text_Explanation->getPosition() + sf::Vector2f { -500, 0 };
+        auto e2 = m_text_Explanation->getPosition();
 
-        auto tw2 = tp::create(m_test_Explanation, 0.5f, s2, e2);
+        auto tw2 = tp::create(m_text_Explanation, 0.5f, s2, e2);
         tw2->setStartDelay(0.3f);
         tw2->setSkipFrames();
 
         tw2->addCompleteCallback([this]() {
-            auto ts1 = ts::create(m_test_Explanation, 0.75f, sf::Vector2f { 1.0f, 1.0f },
+            auto ts1 = ts::create(m_text_Explanation, 0.75f, sf::Vector2f { 1.0f, 1.0f },
                 sf::Vector2f { 1.05f, 1.05f });
             ts1->setRepeat(true);
             ts1->setAgePercentConversion([](float age) {
@@ -98,6 +110,13 @@ void StateMenu::doCreate()
             add(ts1);
         });
         add(tw2);
+    }
+
+    {
+        auto tax = ta::create(m_text_Explanation2, 0.55f, 0, 255);
+        tax->setStartDelay(0.9f);
+        tax->setSkipFrames();
+        add(tax);
     }
 
     {
@@ -112,13 +131,14 @@ void StateMenu::doCreate()
 
     m_currentLevel = 0;
 
-    for (auto i = 0U; i != GP::getLevelList().size(); ++i) {
+    getGame()->getRenderWindow()->setMouseCursorGrabbed(true);
 
+    for (auto i = 0U; i != GP::getLevelList().size(); ++i) {
         auto st = std::make_shared<SmartText>();
         st->loadFont("assets/font.ttf");
         st->setText(GP::getLevelList().at(i).second);
         st->setCharacterSize(12U);
-        st->setPosition({ wC, static_cast<float>(130 + GP::GetMenuLevelTextDistance() * i) });
+        st->setPosition({ wC, static_cast<float>(100 + GP::GetMenuLevelTextDistance() * i) });
         auto col = GP::PaletteColor4();
         col.a = static_cast<uint8_t>(JamTemplate::MathHelper::clamp(
             255 - static_cast<int>(std::fabs(i - m_currentLevel)) * 200, 0, 255));
@@ -154,9 +174,21 @@ void StateMenu::doInternalUpdate(float const elapsed)
         }
 
         m_text_Title->update(elapsed);
-        m_test_Explanation->update(elapsed);
+        m_text_Explanation->update(elapsed);
+        m_text_Explanation2->update(elapsed);
 
         if (m_inputDeadTimer <= 0) {
+
+            if (JamTemplate::InputManager::justPressed(sf::Keyboard::L)) {
+                m_grabCursor = !m_grabCursor;
+                getGame()->getRenderWindow()->setMouseCursorGrabbed(m_grabCursor);
+                std::string const str = (m_grabCursor ? "ON" : "OFF");
+                m_text_Explanation2->setText("[L]ock Mouse: " + str);
+                m_inputDeadTimer = GP::MenuInputDeadTime();
+
+                m_text_Explanation2->flash(GP::MenuInputDeadTime());
+            }
+
             if (JamTemplate::InputManager::justPressed(sf::Keyboard::Down)
                 || JamTemplate::InputManager::justPressed(sf::Keyboard::S)) {
                 m_currentLevel++;
@@ -247,7 +279,9 @@ void StateMenu::doInternalDraw() const
         st->draw(getGame()->getRenderTarget());
     }
 
-    m_test_Explanation->draw(getGame()->getRenderTarget());
+    m_text_Explanation->draw(getGame()->getRenderTarget());
+    m_text_Explanation2->draw(getGame()->getRenderTarget());
+
     m_text_Credits->draw(getGame()->getRenderTarget());
 
     m_overlay->draw(getGame()->getRenderTarget());

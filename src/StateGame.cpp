@@ -90,6 +90,26 @@ void StateGame::doCreate()
     m_vignette->loadSprite("#v#" + std::to_string(static_cast<int>(GP::ScreenSizeInGame().x)) + "#"
         + std::to_string(static_cast<int>(GP::ScreenSizeInGame().y)));
     m_vignette->setIgnoreCamMovement(true);
+
+    int maxX = GP::WindowSizeOutGame().x;
+    int maxY = GP::WindowSizeOutGame().y;
+
+    int mX = JamTemplate::InputManager::getMousePositionScreen().x;
+    int mY = JamTemplate::InputManager::getMousePositionScreen().y;
+
+    if (mX < 0 || mY < 0 || mX > maxX || mY > maxY) {
+        if (mX < 0)
+            mX = 0;
+        else if (mX > maxX)
+            mX = maxX;
+
+        if (mY < 0)
+            mY = 0;
+        else if (mY > maxY)
+            mY = maxY;
+
+        sf::Mouse::setPosition(sf::Vector2i(mX, mY), *getGame()->getRenderWindow());
+    }
 }
 
 void StateGame::doCreateInternal() { }

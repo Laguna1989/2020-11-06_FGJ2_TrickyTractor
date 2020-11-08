@@ -19,7 +19,8 @@ private:
     std::shared_ptr<JamTemplate::SmartShape> m_background;
 
     std::shared_ptr<SmartText> m_text_Title;
-    std::shared_ptr<SmartText> m_test_Explanation;
+    std::shared_ptr<SmartText> m_text_Explanation;
+    std::shared_ptr<SmartText> m_text_Explanation2;
     std::shared_ptr<SmartText> m_text_Credits;
 
     std::shared_ptr<JamTemplate::SmartShape> m_overlay;
@@ -29,6 +30,8 @@ private:
     float m_inputDeadTimer;
 
     bool m_starting { false };
+
+    bool m_grabCursor { true };
 
     void doInternalUpdate(float const /*elapsed*/) override;
     void doCreate() override;
