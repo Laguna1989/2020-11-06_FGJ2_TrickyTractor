@@ -46,6 +46,13 @@ void Target::doCreate()
     m_glow = std::make_shared<JamTemplate::SmartSprite>();
     m_glow->loadSprite("#g#60#80");
     m_glow->setColor(GP::PaletteColorGlow());
+
+    m_ufo = std::make_shared<JamTemplate::SmartAnimation>();
+    m_ufo->add("assets/ufo.png", "idle", sf::Vector2u { 48, 20 },
+        JamTemplate::MathHelper::vectorBetween(0U, 0U), 0.1f);
+    m_ufo->play("idle");
+    m_ufo->setOrigin(sf::Vector2f { m_ufo->getLocalBounds().width / 2, 0 });
+    m_ufo->setOffset(sf::Vector2f { m_ufo->getLocalBounds().width / 2, 0 });
 }
 
 void Target::doUpdate(float const elapsed)
@@ -62,6 +69,11 @@ void Target::doUpdate(float const elapsed)
     m_beamShape->update(elapsed);
     m_beamBorderShape->update(elapsed);
 
+    m_ufo->setPosition(sf::Vector2f { m_beamPosX - m_ufo->getLocalBounds().width / 2,
+        static_cast<float>(static_cast<int>(5.0f * std::sin(getAge() * 3.5f))) });
+
+    m_ufo->update(elapsed);
+
     auto vx = getB2Body()->GetLinearVelocity().x;
     auto vy = getB2Body()->GetLinearVelocity().y;
     vx *= GP::TargetAirFrictionX();
@@ -75,6 +87,20 @@ void Target::handleInput(float const elapsed)
 {
     m_beamPosXLast = m_beamPosX;
     m_beamPosX = JamTemplate::InputManager::getMousePositionWorld().x;
+    float deltaX = m_beamPosX - m_beamPosXLast;
+    // ufo tilting
+    auto v = m_ufo->getRotation();
+
+    double angleInc = -deltaX;
+    if (v > 1) {
+        v -= 25.f * elapsed;
+    } else if (v < 1) {
+        v += 25.f * elapsed;
+    }
+    v += angleInc;
+    v = JamTemplate::MathHelper::clamp(v, -20.0f, 20.0f);
+
+    m_ufo->setRotation(v);
 
     if (JamTemplate::InputManager::justPressed(sf::Mouse::Left)) {
         m_beamShape->flash(0.85f, sf::Color { 255, 255, 255, 40 });
@@ -86,7 +112,6 @@ void Target::handleInput(float const elapsed)
         if (C::BoundingBoxTest(m_animation, m_beamShape)) {
             // std::cout << "overlap\n";
 
-            float deltaX = m_beamPosX - m_beamPosXLast;
             float deltaXClamped
                 = JamTemplate::MathHelper::clamp(deltaX * GP::MouseMovementXToBeamConversion(),
                     -GP::TractorBeamStrengthX(), GP::TractorBeamStrengthX());
@@ -119,6 +144,8 @@ void Target::doDraw() const
     m_beamBorderShape->update(0.0f);
     m_beamBorderShape->draw(getGame()->getRenderTarget());
     m_glow->draw(getGame()->getRenderTarget());
+
+    m_ufo->draw(getGame()->getRenderTarget());
 }
 
 void Target::setBeamStrength(float const v)

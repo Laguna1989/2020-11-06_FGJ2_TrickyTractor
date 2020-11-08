@@ -24,6 +24,7 @@ private:
     std::shared_ptr<JamTemplate::SmartSprite> m_glow;
     std::shared_ptr<JamTemplate::SmartAnimation> m_animation;
     std::shared_ptr<JamTemplate::SmartSprite> m_beamShape;
+    std::shared_ptr<JamTemplate::SmartAnimation> m_ufo;
 
     mutable std::shared_ptr<JamTemplate::SmartShape> m_beamBorderShape;
     float m_beamPosX;

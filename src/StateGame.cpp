@@ -208,21 +208,6 @@ void StateGame::doInternalUpdate(float const elapsed)
     for (auto damagingZone : m_damagingZones) {
         damagingZone->update(elapsed);
     }
-
-    doScrolling(elapsed);
-    if (JamTemplate::Collision::BoundingBoxTest(m_endZone, m_target->getTarget())) {
-        int nextLevelID = m_levelID + 1;
-        if (nextLevelID != GP::getLevelList().size()) {
-            getGame()->switchState(std::make_shared<StateGame>(nextLevelID, m_timer));
-        } else {
-            getGame()->switchState(std::make_shared<StateMenu>(m_timer));
-        }
-    }
-
-    if (m_deathAge > 0.0f) {
-        handleDeath(elapsed);
-    }
-    m_tilemap->update(elapsed);
 }
 
 void StateGame::doScrolling(float const elapsed)
@@ -236,8 +221,8 @@ void StateGame::doScrolling(float const elapsed)
         / static_cast<int>(GP::Zoom());
 
     auto const mpsc
-        = sf::Vector2f { JamTemplate::MathHelper::clamp(mps.x, -50.0f, GP::ScreenSizeInGame().x),
-              JamTemplate::MathHelper::clamp(mps.y, -50.0f, GP::ScreenSizeInGame().y) };
+        = sf::Vector2f { JamTemplate::MathHelper::clamp(mps.x, 0.0f, GP::ScreenSizeInGame().x),
+              JamTemplate::MathHelper::clamp(mps.y, 0.0f, GP::ScreenSizeInGame().y) };
 
     if (mpsc.x < GP::ScrollBoundary()) {
         getGame()->moveCam(sf::Vector2f { -GP::ScrollSpeedX(), 0 } * elapsed);
@@ -269,7 +254,7 @@ void StateGame::doScrolling(float const elapsed)
     auto const msy = static_cast<float>(msyi * GP::TileSizeInPixel());
 
     auto cpxc = JamTemplate::MathHelper::clamp(cpx, 0.0f, msx - cw);
-    auto cpyc = JamTemplate::MathHelper::clamp(cpy, 0.0f, msy - ch);
+    auto cpyc = JamTemplate::MathHelper::clamp(cpy, -10.0f * GP::TileSizeInPixel(), msy - ch);
 
     // std::cout << cpx << " " << msx << " " << cpxc << "\n";
 
@@ -281,9 +266,7 @@ void StateGame::doInternalDraw() const
     m_background->draw(getGame()->getRenderTarget());
     m_tilemap->draw(getGame()->getRenderTarget());
     drawObjects();
-    if (m_endZone) {
-        m_endZone->draw(getGame()->getRenderTarget());
-    }
+
     for (auto damagingZone : m_damagingZones) {
         damagingZone->draw(getGame()->getRenderTarget());
     }
