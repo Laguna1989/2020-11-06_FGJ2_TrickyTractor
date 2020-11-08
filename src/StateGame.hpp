@@ -35,6 +35,7 @@ private:
     std::shared_ptr<JamTemplate::SmartTilemap> m_tilemap;
     std::shared_ptr<TargetContactListener> m_contactListener;
     std::shared_ptr<JamTemplate::SmartText> m_textTimer;
+    float m_lastBeamParticle;
 
     std::shared_ptr<b2World> m_world;
 
@@ -46,6 +47,7 @@ private:
 
     std::shared_ptr<JamTemplate::ParticleSystem<JamTemplate::SmartSprite, 100>> m_particlesDust;
     std::shared_ptr<JamTemplate::ParticleSystem<JamTemplate::SmartShape, 100>> m_particlesBreak;
+    std::shared_ptr<JamTemplate::ParticleSystem<JamTemplate::SmartShape, 100>> m_particlesBeam;
 
     int m_levelID;
     float m_lastCollisionAge = 0.0f;
