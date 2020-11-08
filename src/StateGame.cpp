@@ -406,10 +406,6 @@ void StateGame::handleDamage(float damage)
             m_sndAlarm1.stop();
             m_sndAlarm2.stop();
             m_sndAlarm3.play();
-        } else {
-            m_sndAlarm1.stop();
-            m_sndAlarm2.stop();
-            m_sndAlarm3.stop();
         }
     } else if (damage > GP::AllowedCollisionSpeed() / 2.0f) {
         m_particlesBreak->Fire(10);
