@@ -8,9 +8,11 @@
 #include "MathHelper.hpp"
 #include "SmartShape.hpp"
 #include "SmartSprite.hpp"
+#include "SmartTilemap.hpp"
 #include "StateMenu.hpp"
+#include "Timer.hpp"
 #include "TweenAlpha.hpp"
-#include <SmartTilemap.hpp>
+#include "TweenScale.hpp"
 
 StateGame::StateGame(int levelID, float timer)
     : m_levelID { levelID }
@@ -106,25 +108,27 @@ void StateGame::doCreate()
         + std::to_string(static_cast<int>(GP::ScreenSizeInGame().y)));
     m_vignette->setIgnoreCamMovement(true);
 
-    int maxX = GP::WindowSizeOutGame().x;
-    int maxY = GP::WindowSizeOutGame().y;
+    m_particlesDust = std::make_shared<JamTemplate::ParticleSystem<JamTemplate::SmartSprite, 100>>(
+        []() {
+            auto const s = std::make_shared<JamTemplate::SmartSprite>();
+            s->loadSprite("#g#16#255");
+            s->setColor(GP::PaletteColorGlow());
+            return s;
+        },
+        [this](std::shared_ptr<JamTemplate::SmartSprite> s) {
+            s->setPosition(m_target->getPosition() - sf::Vector2f { 8, 8 });
 
-    int mX = JamTemplate::InputManager::getMousePositionScreen().x;
-    int mY = JamTemplate::InputManager::getMousePositionScreen().y;
+            auto twa = JamTemplate::TweenAlpha<JamTemplate::SmartSprite>::create(s, 0.5f, 100, 0);
+            add(twa);
 
-    if (mX < 0 || mY < 0 || mX > maxX || mY > maxY) {
-        if (mX < 0)
-            mX = 0;
-        else if (mX > maxX)
-            mX = maxX;
+            auto tws = JamTemplate::TweenScale<JamTemplate::SmartSprite>::create(
+                s, 0.75f, sf::Vector2f { 1.0f, 1.0f }, sf::Vector2f { 0.0f, 0.0f });
+            add(tws);
+        });
+    add(m_particlesDust);
 
-        if (mY < 0)
-            mY = 0;
-        else if (mY > maxY)
-            mY = maxY;
-
-        sf::Mouse::setPosition(sf::Vector2i(mX, mY), *getGame()->getRenderWindow());
-    }
+    auto t = std::make_shared<JamTemplate::Timer>(0.025f, [this]() { m_particlesDust->Fire(1); });
+    add(t);
 }
 
 void StateGame::doCreateInternal() { }

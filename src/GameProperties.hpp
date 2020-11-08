@@ -29,6 +29,7 @@ public:
 
     static sf::Color PaletteFlashGreen() { return sf::Color { 51, 143, 63 }; }
     static sf::Color PaletteFlashRed() { return sf::Color { 143, 33, 33 }; }
+    static sf::Color PaletteColorGlow() { return sf::Color { 255, 255, 163 }; }
 
     static std::string GameName() { return "Tricky\nTractor"; }
 

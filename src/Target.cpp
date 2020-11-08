@@ -45,7 +45,7 @@ void Target::doCreate()
 
     m_glow = std::make_shared<JamTemplate::SmartSprite>();
     m_glow->loadSprite("#g#60#80");
-    m_glow->setColor(sf::Color { 255, 255, 163 });
+    m_glow->setColor(GP::PaletteColorGlow());
 }
 
 void Target::doUpdate(float const elapsed)

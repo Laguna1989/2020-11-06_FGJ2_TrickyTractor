@@ -4,6 +4,7 @@
 #include "Collider.hpp"
 #include "JamTemplate/GameState.hpp"
 #include "JamTemplate/ObjectGroup.hpp"
+#include "ParticleSystem.hpp"
 #include "Target.hpp"
 #include "TargetContactListener.hpp"
 #include <Box2D/Box2D.h>
@@ -39,6 +40,8 @@ private:
 
     std::shared_ptr<JamTemplate::SmartShape> m_endZone;
     std::shared_ptr<JamTemplate::SmartSprite> m_vignette;
+
+    std::shared_ptr<JamTemplate::ParticleSystem<JamTemplate::SmartSprite, 100>> m_particlesDust;
 
     int m_levelID;
     float m_lastCollisionAge = 0.0f;
