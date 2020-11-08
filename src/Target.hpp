@@ -5,6 +5,7 @@
 #include "SmartAnimation.hpp"
 #include "SmartShape.hpp"
 #include "SmartSprite.hpp"
+#include <SFML/Audio.hpp>
 #include <string>
 
 class Target : public JamTemplate::Box2DObject {
@@ -13,6 +14,7 @@ public:
         : Box2DObject { world, def }
     {
     }
+    ~Target() { m_sndTraktorLoop.stop(); };
 
     sf::Vector2f getTargetPosition();
     void setDamage(unsigned int currentDamage);
@@ -45,6 +47,11 @@ private:
     void setBeamStrength(float const v);
 
     void registerDamageAnimation(unsigned int damage);
+
+    sf::SoundBuffer m_sndBufTraktorLoop;
+
+public:
+    sf::Sound m_sndTraktorLoop;
 };
 
 #endif

@@ -2,6 +2,7 @@
 #define GAME_STATE_MENU_HPP_INCLUDEGUARD
 
 #include "JamTemplate/GameState.hpp"
+#include <SFML/Audio.hpp>
 
 namespace JamTemplate {
 

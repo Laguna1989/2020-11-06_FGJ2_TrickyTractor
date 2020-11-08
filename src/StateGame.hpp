@@ -8,6 +8,7 @@
 #include "Target.hpp"
 #include "TargetContactListener.hpp"
 #include <Box2D/Box2D.h>
+#include <SFML/Audio.hpp>
 #include <iostream>
 #include <memory>
 
@@ -68,6 +69,15 @@ private:
     void handleDeath(float const elapsed);
 
     bool playerIsInBlockingZone();
+
+    sf::SoundBuffer m_sndBufAlarm1;
+    sf::SoundBuffer m_sndBufAlarm2;
+    sf::SoundBuffer m_sndBufAlarm3;
+    sf::SoundBuffer m_sndBufCollision;
+    sf::Sound m_sndAlarm1;
+    sf::Sound m_sndAlarm2;
+    sf::Sound m_sndAlarm3;
+    sf::Sound m_sndCollision;
 };
 
 #endif

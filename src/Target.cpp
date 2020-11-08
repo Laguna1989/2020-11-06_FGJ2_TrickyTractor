@@ -53,6 +53,15 @@ void Target::doCreate()
     m_ufo->play("idle");
     m_ufo->setOrigin(sf::Vector2f { m_ufo->getLocalBounds().width / 2, 0 });
     m_ufo->setOffset(sf::Vector2f { m_ufo->getLocalBounds().width / 2, 0 });
+
+    /////////////////////////77
+    // sounds
+
+    m_sndBufTraktorLoop.loadFromFile("assets/sounds/traktor_brizzl_decline_1_loop.ogg");
+    m_sndTraktorLoop.setBuffer(m_sndBufTraktorLoop);
+    m_sndTraktorLoop.setLoop(true);
+    m_sndTraktorLoop.setVolume(0);
+    m_sndTraktorLoop.play();
 }
 
 void Target::doUpdate(float const elapsed)
@@ -104,6 +113,10 @@ void Target::handleInput(float const elapsed)
 
     if (JamTemplate::InputManager::justPressed(sf::Mouse::Left)) {
         m_beamShape->flash(0.85f, sf::Color { 255, 255, 255, 40 });
+        m_sndTraktorLoop.setVolume(25);
+    } else if (JamTemplate::InputManager::justReleased(sf::Mouse::Left)) {
+
+        m_sndTraktorLoop.setVolume(0);
     }
     if (JamTemplate::InputManager::pressed(sf::Mouse::Left)) {
         setBeamStrength(1.0f);

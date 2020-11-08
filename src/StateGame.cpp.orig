@@ -59,7 +59,7 @@ void StateGame::doCreate()
     m_tilemap = std::make_shared<JamTemplate::SmartTilemap>(
         std::filesystem::path(GP::getLevelList().at(m_levelID).first));
     m_tilemap->setScreenSizeHint(GP::ScreenSizeInGame(), getGame());
-    m_tilemap->update(0.0f);
+
     doCreateInternal();
     add(m_hud);
 
@@ -88,21 +88,12 @@ void StateGame::doCreate()
             m_endZone->setPosition(r.position);
             m_endZone->setRotation(r.rotation);
         } else if (r.m_type == "damaging") {
-            auto z = std::make_shared<JamTemplate::SmartShape>();
-            z->makeRect(r.sizeDiagonal);
-            z->setColor(sf::Color { 255, 64, 0, 0 });
-            z->setPosition(r.position);
-            z->setRotation(r.rotation);
-            z->update(0.0f);
-            m_damagingZones.push_back(z);
-        } else if (r.m_type == "blocking") {
-            auto z = std::make_shared<JamTemplate::SmartShape>();
-            z->makeRect(r.sizeDiagonal);
-            z->setColor(sf::Color { 68, 112, 45, 20 });
-            z->setPosition(r.position);
-            z->setRotation(r.rotation);
-            z->update(0.0f);
-            m_blockingZones.push_back(z);
+            auto damZone = std::make_shared<JamTemplate::SmartShape>();
+            damZone->makeRect(r.sizeDiagonal);
+            damZone->setColor(sf::Color { 255, 64, 0, 0 });
+            damZone->setPosition(r.position);
+            damZone->setRotation(r.rotation);
+            m_damagingZones.push_back(damZone);
         }
     }
     getGame()->setCamOffset(startPosition - GP::ScreenSizeInGame() / 2.0f);
@@ -124,7 +115,6 @@ void StateGame::doCreate()
     m_vignette->loadSprite("#v#" + std::to_string(static_cast<int>(GP::ScreenSizeInGame().x)) + "#"
         + std::to_string(static_cast<int>(GP::ScreenSizeInGame().y)));
     m_vignette->setIgnoreCamMovement(true);
-    m_vignette->update(0.0f);
 
     m_particlesDust = std::make_shared<JamTemplate::ParticleSystem<JamTemplate::SmartSprite, 100>>(
         []() {
@@ -170,63 +160,6 @@ void StateGame::doCreate()
             add(twa);
         });
     add(m_particlesBreak);
-
-    m_particlesBeam = std::make_shared<JamTemplate::ParticleSystem<JamTemplate::SmartShape, 100>>(
-        []() {
-            auto const s = std::make_shared<JamTemplate::SmartShape>();
-            s->makeRect({ 1, 4 });
-            s->setColor(sf::Color { 213, 214, 219, 120 });
-            return s;
-        },
-        [this](std::shared_ptr<JamTemplate::SmartShape> s) {
-            auto const start
-                = sf::Vector2f { m_target->getBeamPosX(), m_target->getTargetPosition().y }
-                + sf::Vector2f { JamTemplate::Random::getFloatGauss(0, 8),
-                      JamTemplate::Random::getFloat(-30, 50) };
-
-            s->setPosition(start);
-
-            auto const end
-                = start + sf::Vector2f { 0, -100 + JamTemplate::Random::getFloatGauss(0, 5) };
-
-            auto twp
-                = JamTemplate::TweenPosition<JamTemplate::SmartShape>::create(s, 1.0f, start, end);
-            add(twp);
-
-            auto twa = JamTemplate::TweenAlpha<JamTemplate::SmartShape>::create(s, 0.25f, 120, 0);
-            twa->setStartDelay(0.6f);
-            twa->setSkipFrames(2);
-            add(twa);
-
-            auto tws = JamTemplate::TweenScale<JamTemplate::SmartShape>::create(
-                s, 1.0f, sf::Vector2f { 1.0f, 1.0f }, sf::Vector2f { 1.0f, 2.0f });
-            add(tws);
-        });
-    add(m_particlesBeam);
-    m_lastBeamParticle = 0;
-
-    ////////////////////////////// Sounds
-    m_sndBufAlarm1.loadFromFile("assets/sounds/alarm_1.ogg");
-    m_sndBufAlarm2.loadFromFile("assets/sounds/alarm_2.ogg");
-    m_sndBufAlarm3.loadFromFile("assets/sounds/alarm_3.ogg");
-    m_sndBufCollision.loadFromFile("assets/sounds/soft_collision_1.ogg");
-    m_sndAlarm1.setBuffer(m_sndBufAlarm1);
-    m_sndAlarm2.setBuffer(m_sndBufAlarm2);
-    m_sndAlarm3.setBuffer(m_sndBufAlarm3);
-    m_sndCollision.setBuffer(m_sndBufCollision);
-
-    m_sndAlarm1.setVolume(80);
-    m_sndAlarm2.setVolume(80);
-    m_sndAlarm3.setVolume(80);
-
-    m_sndAlarm1.setLoop(true);
-    m_sndAlarm2.setLoop(true);
-    m_sndAlarm3.setLoop(true);
-
-    if (m_timer <= 0.1f) {
-        getGame()->m_music.openFromFile("assets/sounds/song_ingame_1.ogg");
-        getGame()->m_music.play();
-    }
 }
 
 void StateGame::doCreateInternal() { }
@@ -235,7 +168,6 @@ void StateGame::doInternalUpdate(float const elapsed)
 {
     if (!m_isDead) {
         m_timer += elapsed;
-        m_lastBeamParticle -= elapsed;
 
         if (JamTemplate::InputManager::justReleased(GP::KeyToggleDrawObjectGroups())) {
             m_tilemap->toggleObjectGroupVisibility();
@@ -249,13 +181,6 @@ void StateGame::doInternalUpdate(float const elapsed)
             getGame()->switchState(std::make_shared<StateMenu>(0.0f));
         }
 
-        if (JamTemplate::InputManager::pressed(sf::Mouse::Left)) {
-            if (m_lastBeamParticle <= 0) {
-                m_particlesBeam->Fire(1);
-                m_lastBeamParticle = 0.12f;
-            }
-        }
-
         doScrolling(elapsed);
         if (JamTemplate::Collision::BoundingBoxTest(m_endZone, m_target->getTarget())) {
             int nextLevelID = m_levelID + 1;
@@ -265,12 +190,9 @@ void StateGame::doInternalUpdate(float const elapsed)
                 getGame()->switchState(std::make_shared<StateMenu>(m_timer));
             }
         }
-        m_target->setVerticalBeam(!playerIsInBlockingZone());
-
     } else {
         handleDeath(elapsed);
     }
-
     m_background->update(elapsed);
     m_overlay->update(elapsed);
     m_vignette->update(elapsed);
@@ -286,9 +208,24 @@ void StateGame::doInternalUpdate(float const elapsed)
     for (auto damagingZone : m_damagingZones) {
         damagingZone->update(elapsed);
     }
-    for (auto z : m_blockingZones) {
-        z->update(elapsed);
+<<<<<<< HEAD
+=======
+
+    doScrolling(elapsed);
+    if (JamTemplate::Collision::BoundingBoxTest(m_endZone, m_target->getTarget())) {
+        int nextLevelID = m_levelID + 1;
+        if (nextLevelID != GP::getLevelList().size()) {
+            getGame()->switchState(std::make_shared<StateGame>(nextLevelID, m_timer));
+        } else {
+            getGame()->switchState(std::make_shared<StateMenu>(m_timer));
+        }
     }
+
+    if (m_isDead) {
+        handleDeath(elapsed);
+    }
+    m_tilemap->update(elapsed);
+>>>>>>> ade87d3cb508c941ad05f84a68a5214bd811b70e
 }
 
 void StateGame::doScrolling(float const elapsed)
@@ -351,14 +288,7 @@ void StateGame::doInternalDraw() const
     for (auto damagingZone : m_damagingZones) {
         damagingZone->draw(getGame()->getRenderTarget());
     }
-    for (auto z : m_blockingZones) {
-        z->draw(getGame()->getRenderTarget());
-    }
     m_vignette->draw(getGame()->getRenderTarget());
-
-    for (int i = 0; i != m_target->getDamage(); ++i) {
-        m_vignette->draw(getGame()->getRenderTarget());
-    }
     m_overlay->draw(getGame()->getRenderTarget());
 
     m_textTimer->draw(getGame()->getRenderTarget());
@@ -386,34 +316,14 @@ void StateGame::handleDamage(float damage)
         m_overlay->flash(GP::StrongFlashDuration(), GP::StrongFlashColor());
         size_t newDamage = m_target->getDamage() + 1;
         m_particlesBreak->Fire(20);
-        m_sndCollision.play();
         if (newDamage > GP::MaxCrystalDamage()) {
             m_isDead = true;
 
             return;
         }
         m_target->setDamage(newDamage);
-
-        if (m_target->getDamage() == 1) {
-            m_sndAlarm2.stop();
-            m_sndAlarm3.stop();
-            m_sndAlarm1.play();
-        } else if (m_target->getDamage() == 3) {
-            m_sndAlarm1.stop();
-            m_sndAlarm3.stop();
-            m_sndAlarm2.play();
-        } else if (m_target->getDamage() == 4) {
-            m_sndAlarm1.stop();
-            m_sndAlarm2.stop();
-            m_sndAlarm3.play();
-        } else {
-            m_sndAlarm1.stop();
-            m_sndAlarm2.stop();
-            m_sndAlarm3.stop();
-        }
     } else if (damage > GP::AllowedCollisionSpeed() / 2.0f) {
         m_particlesBreak->Fire(10);
-        m_sndCollision.play();
         getGame()->shake(GP::WeakShakeDuration(), GP::WeakShakeIntensity());
         m_overlay->flash(GP::WeakFlashDuration(), GP::WeakFlashColor());
     }
@@ -432,35 +342,16 @@ void StateGame::handleDeath(float const elapsed)
         }
     }
 
-    // scroll up + tween to black + fade out sounds
+    // scroll up + tween to black
     getGame()->moveCam(sf::Vector2f { 0, -GP::ScrollSpeedY() * elapsed });
-    m_target->m_sndTraktorLoop.setVolume(m_target->m_sndTraktorLoop.getVolume() * 0.95f);
-    m_sndAlarm1.setVolume(m_sndAlarm1.getVolume() * 0.95f);
-    m_sndAlarm2.setVolume(m_sndAlarm2.getVolume() * 0.95f);
-    m_sndAlarm3.setVolume(m_sndAlarm3.getVolume() * 0.95f);
-
     if (!m_alreadyTweening) {
-
         m_particlesDust->kill();
         auto tw = JamTemplate::TweenAlpha<JamTemplate::SmartShape>::create(
             m_overlay, 1.75f, sf::Uint8 { 0 }, sf::Uint8 { 255 });
         tw->addCompleteCallback(
             [this]() { getGame()->switchState(std::make_shared<StateMenu>(0.0f)); });
         tw->setSkipFrames();
-        tw->setAgePercentConversion([](float const in) { return std::pow(in, 0.25f); });
         add(tw);
     }
     m_alreadyTweening = true;
-}
-
-bool StateGame::playerIsInBlockingZone()
-{
-    for (auto z : m_blockingZones) {
-        if (JamTemplate::Collision::BoundingBoxTest(z, m_target->getTarget())) {
-            // std::cout << "overlap\n";
-            return true;
-        }
-    }
-    // std::cout << "NO overlap\n";
-    return false;
 }
