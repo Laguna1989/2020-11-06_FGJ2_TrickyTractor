@@ -78,7 +78,7 @@ public:
         levelList.push_back(std::make_pair<std::string, std::string>(
             "assets/tricky-tractor-level-1.json", "Can't touch this!"));
         levelList.push_back(std::make_pair<std::string, std::string>(
-            "assets/tricky-tractor-level-0.json", "Duplicate 2"));
+            "assets/tricky-tractor-level-2.json", "Welcome to the Jam!"));
         levelList.push_back(std::make_pair<std::string, std::string>(
             "assets/tricky-tractor-level-0.json", "Duplicat 3"));
         levelList.push_back(std::make_pair<std::string, std::string>(
