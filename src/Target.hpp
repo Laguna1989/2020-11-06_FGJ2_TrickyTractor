@@ -20,6 +20,8 @@ public:
 
     std::shared_ptr<JamTemplate::SmartAnimation> getTarget() { return m_animation; }
 
+    float getBeamPosX() const { return m_beamPosX; };
+
     void setVerticalBeam(bool active) { m_vertivalBeamActive = active; };
 
 private:

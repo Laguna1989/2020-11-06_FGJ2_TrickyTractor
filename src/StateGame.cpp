@@ -170,6 +170,40 @@ void StateGame::doCreate()
             add(twa);
         });
     add(m_particlesBreak);
+
+    m_particlesBeam = std::make_shared<JamTemplate::ParticleSystem<JamTemplate::SmartShape, 100>>(
+        []() {
+            auto const s = std::make_shared<JamTemplate::SmartShape>();
+            s->makeRect({ 1, 4 });
+            s->setColor(sf::Color { 213, 214, 219, 120 });
+            return s;
+        },
+        [this](std::shared_ptr<JamTemplate::SmartShape> s) {
+            auto const start
+                = sf::Vector2f { m_target->getBeamPosX(), m_target->getTargetPosition().y }
+                + sf::Vector2f { JamTemplate::Random::getFloatGauss(0, 8),
+                      JamTemplate::Random::getFloat(-30, 50) };
+
+            s->setPosition(start);
+
+            auto const end
+                = start + sf::Vector2f { 0, -100 + JamTemplate::Random::getFloatGauss(0, 5) };
+
+            auto twp
+                = JamTemplate::TweenPosition<JamTemplate::SmartShape>::create(s, 1.0f, start, end);
+            add(twp);
+
+            auto twa = JamTemplate::TweenAlpha<JamTemplate::SmartShape>::create(s, 0.25f, 120, 0);
+            twa->setStartDelay(0.6f);
+            twa->setSkipFrames(2);
+            add(twa);
+
+            auto tws = JamTemplate::TweenScale<JamTemplate::SmartShape>::create(
+                s, 1.0f, sf::Vector2f { 1.0f, 1.0f }, sf::Vector2f { 1.0f, 2.0f });
+            add(tws);
+        });
+    add(m_particlesBeam);
+    m_lastBeamParticle = 0;
 }
 
 void StateGame::doCreateInternal() { }
@@ -178,6 +212,7 @@ void StateGame::doInternalUpdate(float const elapsed)
 {
     if (!m_isDead) {
         m_timer += elapsed;
+        m_lastBeamParticle -= elapsed;
 
         if (JamTemplate::InputManager::justReleased(GP::KeyToggleDrawObjectGroups())) {
             m_tilemap->toggleObjectGroupVisibility();
@@ -189,6 +224,13 @@ void StateGame::doInternalUpdate(float const elapsed)
 
         if (JamTemplate::InputManager::justPressed(sf::Keyboard::Escape)) {
             getGame()->switchState(std::make_shared<StateMenu>(0.0f));
+        }
+
+        if (JamTemplate::InputManager::pressed(sf::Mouse::Left)) {
+            if (m_lastBeamParticle <= 0) {
+                m_particlesBeam->Fire(1);
+                m_lastBeamParticle = 0.12f;
+            }
         }
 
         doScrolling(elapsed);
