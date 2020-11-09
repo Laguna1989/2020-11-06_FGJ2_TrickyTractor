@@ -3,7 +3,7 @@
 #include "MathHelper.hpp"
 
 Collider::Collider(std::shared_ptr<b2World> world, const Rect& rectDef)
-    : Box2DObject(world, &GP::defaultColliderDef(rectDef))
+    : Box2DObject(world, GP::defaultColliderDef(rectDef))
 {
 
     b2Vec2 halfAxes(rectDef.sizeDiagonal.x / 2.0f, rectDef.sizeDiagonal.y / 2.0f);

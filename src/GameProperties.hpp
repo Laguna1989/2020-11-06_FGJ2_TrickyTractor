@@ -34,12 +34,15 @@ public:
     static std::string GameName() { return "Tricky\nTractor"; }
 
     static sf::Keyboard::Key KeyToggleDrawObjectGroups() { return sf::Keyboard::F5; };
-    static b2BodyDef defaultColliderDef(const Rect& rect)
+
+    static b2BodyDef m_bodyDef;
+
+    static b2BodyDef* defaultColliderDef(const Rect& rect)
     {
-        b2BodyDef retVal {};
-        retVal.position = JamTemplate::C::vec(rect.position);
-        retVal.angle = JamTemplate::MathHelper::deg2rad(rect.rotation);
-        return retVal;
+
+        m_bodyDef.position = JamTemplate::C::vec(rect.position);
+        m_bodyDef.angle = JamTemplate::MathHelper::deg2rad(rect.rotation);
+        return &m_bodyDef;
     }
     static std::string ColliderLayerName() { return "Terrain: Kollisionen"; }
     static std::string OtherLayerName() { return "Terrain: Start"; }
