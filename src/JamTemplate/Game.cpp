@@ -14,8 +14,8 @@ Game::Game(unsigned int w, unsigned int h, float zoom, std::string const& title)
     , m_zoom { zoom }
     , m_renderTarget { std::make_shared<sf::RenderTexture>() }
 {
-    // m_renderWindow->setFramerateLimit(60);
-    m_renderWindow->setVerticalSyncEnabled(true);
+    m_renderWindow->setFramerateLimit(60);
+    // m_renderWindow->setVerticalSyncEnabled(true);
     m_renderWindow->setMouseCursorVisible(false);
     unsigned int scaledWidth = static_cast<unsigned int>(w / m_zoom);
     unsigned int scaledHeight = static_cast<unsigned int>(h / m_zoom);

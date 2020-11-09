@@ -11,8 +11,9 @@ int main()
 
     JamTemplate::Random::useTimeAsRandomSeed();
 
-    JamTemplate::Game::Sptr game = std::make_shared<JamTemplate::Game>(
-        GP::WindowSizeOutGame().x, GP::WindowSizeOutGame().y, GP::Zoom(), GP::GameName());
+    JamTemplate::Game::Sptr game
+        = std::make_shared<JamTemplate::Game>(static_cast<unsigned int>(GP::WindowSizeOutGame().x),
+            static_cast<unsigned int>(GP::WindowSizeOutGame().y), GP::Zoom(), GP::GameName());
     auto window = game->getRenderWindow();
 
     game->switchState(std::make_shared<StateMenu>());

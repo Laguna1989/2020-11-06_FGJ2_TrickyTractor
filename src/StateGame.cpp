@@ -386,7 +386,7 @@ void StateGame::handleDamage(float damage)
     if (damage > GP::AllowedCollisionSpeed() || damagingZoneOverride) {
         getGame()->shake(GP::StrongShakeDuration(), GP::StrongShakeIntensity());
         m_overlay->flash(GP::StrongFlashDuration(), GP::StrongFlashColor());
-        size_t newDamage = m_target->getDamage() + 1;
+        unsigned int newDamage = m_target->getDamage() + 1;
         m_particlesBreak->Fire(20);
         m_sndCollision.play();
         if (newDamage > GP::MaxCrystalDamage()) {

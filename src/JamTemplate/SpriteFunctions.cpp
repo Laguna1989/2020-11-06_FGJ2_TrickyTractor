@@ -56,8 +56,8 @@ sf::Image makeGlowImage(float r, std::uint8_t max)
 sf::Image makeVignetteImage(unsigned int w, unsigned int h)
 {
     sf::Image img {};
-    float const cx = w / 2;
-    float const cy = h / 2;
+    float const cx = w / 2.0f;
+    float const cy = h / 2.0f;
     img.create(w, h, sf::Color::Transparent);
     for (auto i = 0U; i != w; ++i) {
         for (auto j = 0U; j != h; ++j) {

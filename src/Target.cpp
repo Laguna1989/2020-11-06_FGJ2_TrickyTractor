@@ -100,7 +100,7 @@ void Target::handleInput(float const elapsed)
     // ufo tilting
     auto v = m_ufo->getRotation();
 
-    double angleInc = -deltaX;
+    float angleInc = -deltaX;
     if (v > 1) {
         v -= 25.f * elapsed;
     } else if (v < 1) {
@@ -192,6 +192,6 @@ void Target::setDamage(unsigned int currentDamage)
     m_animation->play(animName.str(), 0);
 }
 
-unsigned int Target::getDamage() { return m_damage; }
+unsigned int Target::getDamage() { return static_cast<unsigned int>(m_damage); }
 
 sf::Vector2f Target::getTargetPosition() { return m_animation->getPosition(); }

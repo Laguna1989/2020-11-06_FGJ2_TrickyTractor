@@ -42,7 +42,7 @@ sf::Image createGlowImage(std::vector<std::string> const& ssv)
     if (count != ssv.at(2).size()) {
         throw std::invalid_argument { "invalid glowmax" };
     }
-    return SpriteFunctions::makeGlowImage(s, max);
+    return SpriteFunctions::makeGlowImage(static_cast<float>(s), static_cast<uint8_t>(max));
 }
 
 sf::Image createVignetteImage(std::vector<std::string> const& ssv)

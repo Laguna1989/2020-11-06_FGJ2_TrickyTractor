@@ -213,7 +213,8 @@ void StateMenu::doInternalUpdate(float const elapsed)
 
                 for (auto i = 0U; i != m_levelNames.size(); ++i) {
                     uint8_t a = static_cast<uint8_t>(JamTemplate::MathHelper::clamp(255
-                            - static_cast<int>(std::fabs(static_cast<int>(i) - m_currentLevel))
+                            - static_cast<int>(
+                                  std::fabs(static_cast<int>(i) - static_cast<int>(m_currentLevel)))
                                 * 200,
                         0, 255));
 
@@ -252,7 +253,8 @@ void StateMenu::doInternalUpdate(float const elapsed)
 
                 for (auto i = 0U; i != m_levelNames.size(); ++i) {
                     uint8_t a = static_cast<uint8_t>(JamTemplate::MathHelper::clamp(255
-                            - static_cast<int>(std::fabs(static_cast<int>(i) - m_currentLevel))
+                            - static_cast<int>(
+                                  std::fabs(static_cast<int>(i) - static_cast<int>(m_currentLevel)))
                                 * 200,
                         0, 255));
 
