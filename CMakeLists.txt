@@ -35,7 +35,8 @@ if (WIN32)
 endif()
 
 if (APPLE)
-    link_directories(/usr/local/Cellar/sfml/2.4.2_1/lib/)
+    link_directories(/usr/local/Cellar/sfml/2.5.1/lib/)
+
 endif()
 
 #####################################################
@@ -55,7 +56,7 @@ target_include_directories(JamTemplate PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src/Ja
 target_include_directories(JamTemplate SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ext/SFML-2.5.1_win/include)
 target_include_directories(JamTemplate SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ext/box2d)
 target_include_directories(JamTemplate SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ext/tileson-master/include)
-target_include_directories(JamTemplate SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/usr/local/Cellar/sfml/2.4.2_1/include) 
+target_include_directories(JamTemplate SYSTEM PUBLIC /usr/local/Cellar/sfml/2.5.1/include) 
 
 # group together similar files for a cleaner JamTemplate Project in IDEs that support this feature
 source_group(GameLoop REGULAR_EXPRESSION src/JamTemplate/Game*)
