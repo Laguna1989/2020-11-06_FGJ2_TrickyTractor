@@ -29,7 +29,7 @@ public:
     // reset all stored images
     static void reset();
 
-    static std::string TextureManager::getFlashName(std::string const& str);
+    static std::string getFlashName(std::string const& str);
 
     // This will chance all textures and might not be revertible.
     // Warning: due to slow copy process from graphics memory to ram and back to graphics this
@@ -65,7 +65,7 @@ public:
     static void addSelectiveColorReplacement(
         int idx, std::vector<std::pair<sf::Color, sf::Color>> replace)
     {
-        if (m_selectiveColorReplace.size() <= idx) {
+        if (m_selectiveColorReplace.size() <= static_cast<std::size_t>(idx)) {
             m_selectiveColorReplace.resize(idx + 1U);
         }
 

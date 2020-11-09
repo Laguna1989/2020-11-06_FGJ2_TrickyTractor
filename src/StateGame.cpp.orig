@@ -183,7 +183,7 @@ void StateGame::doInternalUpdate(float const elapsed)
 
         doScrolling(elapsed);
         if (JamTemplate::Collision::BoundingBoxTest(m_endZone, m_target->getTarget())) {
-            int nextLevelID = m_levelID + 1;
+            unsigned int nextLevelID = m_levelID + 1U;
             if (nextLevelID != GP::getLevelList().size()) {
                 getGame()->switchState(std::make_shared<StateGame>(nextLevelID, m_timer));
             } else {

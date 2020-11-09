@@ -260,7 +260,7 @@ void StateGame::doInternalUpdate(float const elapsed)
 
         doScrolling(elapsed);
         if (JamTemplate::Collision::BoundingBoxTest(m_endZone, m_target->getTarget())) {
-            int nextLevelID = m_levelID + 1;
+            unsigned int nextLevelID = m_levelID + 1U;
             if (nextLevelID != GP::getLevelList().size()) {
                 getGame()->switchState(std::make_shared<StateGame>(nextLevelID, m_timer));
             } else {
@@ -316,7 +316,7 @@ void StateGame::doScrolling(float const elapsed)
 
     if (tps.y < GP::ScrollBoundary()) {
         float const f = (tps.y < 0) ? 2.0f : 1.0f;
-        getGame()->moveCam(sf::Vector2f { 0, -GP::ScrollSpeedY() } * elapsed);
+        getGame()->moveCam(sf::Vector2f { 0, -GP::ScrollSpeedY() * f } * elapsed);
     }
     if (tps.y > GP::ScreenSizeInGame().y - GP::ScrollBoundary()) {
         float const f = (tps.y > GP::ScreenSizeInGame().y) ? 2.0f : 1.0f;
@@ -358,7 +358,7 @@ void StateGame::doInternalDraw() const
     }
     m_vignette->draw(getGame()->getRenderTarget());
 
-    for (int i = 0; i != m_target->getDamage(); ++i) {
+    for (auto i = 0U; i != m_target->getDamage(); ++i) {
         m_vignette->draw(getGame()->getRenderTarget());
     }
     m_overlay->draw(getGame()->getRenderTarget());
@@ -420,7 +420,6 @@ void StateGame::handleDamage(float damage)
 
 void StateGame::handleDeath(float const elapsed)
 {
-    float t = getAge();
     m_target->kill();
 
     // Allow for skipping the animation

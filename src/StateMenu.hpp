@@ -29,7 +29,7 @@ private:
     mutable std::shared_ptr<JamTemplate::SmartSprite> m_arrow;
 
     std::vector<std::shared_ptr<SmartText>> m_levelNames;
-    int m_currentLevel;
+    unsigned int m_currentLevel;
     float m_inputDeadTimer;
 
     float m_lastTime;

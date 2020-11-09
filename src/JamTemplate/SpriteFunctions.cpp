@@ -1,5 +1,6 @@
 ﻿#include "SpriteFunctions.hpp"
 #include "MathHelper.hpp"
+#include <cmath>
 
 namespace JamTemplate {
 

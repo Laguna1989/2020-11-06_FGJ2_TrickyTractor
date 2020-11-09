@@ -33,16 +33,16 @@ public:
 
     static std::string GameName() { return "Tricky\nTractor"; }
 
-    static const sf::Keyboard::Key KeyToggleDrawObjectGroups() { return sf::Keyboard::F5; };
-    static const b2BodyDef defaultColliderDef(const Rect& rect)
+    static sf::Keyboard::Key KeyToggleDrawObjectGroups() { return sf::Keyboard::F5; };
+    static b2BodyDef defaultColliderDef(const Rect& rect)
     {
         b2BodyDef retVal {};
         retVal.position = JamTemplate::C::vec(rect.position);
         retVal.angle = JamTemplate::MathHelper::deg2rad(rect.rotation);
         return retVal;
     }
-    static const std::string ColliderLayerName() { return "Terrain: Kollisionen"; }
-    static const std::string OtherLayerName() { return "Terrain: Start"; }
+    static std::string ColliderLayerName() { return "Terrain: Kollisionen"; }
+    static std::string OtherLayerName() { return "Terrain: Start"; }
 
     static float GravityStrength() { return 50.0f; }
     static float TractorBeamWidth() { return 48.0f; }

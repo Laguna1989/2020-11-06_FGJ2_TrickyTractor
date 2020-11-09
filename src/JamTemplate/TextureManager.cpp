@@ -66,8 +66,8 @@ sf::Image createVignetteImage(std::vector<std::string> const& ssv)
 
 void replaceOneColor(sf::Image& img, sf::Color const& from, sf::Color const& to)
 {
-    for (unsigned int x = 0; x != img.getSize().x; ++x) {
-        for (unsigned int y = 0; y != img.getSize().y; ++y) {
+    for (unsigned int x = 0U; x != img.getSize().x; ++x) {
+        for (unsigned int y = 0U; y != img.getSize().y; ++y) {
             auto c = img.getPixel(x, y);
             if (c == from) {
                 img.setPixel(x, y, to);

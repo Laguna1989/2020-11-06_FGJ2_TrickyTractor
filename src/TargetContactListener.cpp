@@ -8,7 +8,7 @@ TargetContactListener::TargetContactListener(std::function<void(float damage)> d
 {
 }
 
-void TargetContactListener::PostSolve(b2Contact* contact, const b2ContactImpulse* impulse)
+void TargetContactListener::PostSolve(b2Contact* /*contact*/, const b2ContactImpulse* impulse)
 {
     auto sumImpulse = impulse->normalImpulses[0] + impulse->tangentImpulses[0];
     if (impulse->count > 1) {

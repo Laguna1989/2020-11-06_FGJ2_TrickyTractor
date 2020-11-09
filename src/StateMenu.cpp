@@ -212,7 +212,6 @@ void StateMenu::doInternalUpdate(float const elapsed)
                 }
 
                 for (auto i = 0U; i != m_levelNames.size(); ++i) {
-                    auto col = GP::PaletteColor4();
                     uint8_t a = static_cast<uint8_t>(JamTemplate::MathHelper::clamp(255
                             - static_cast<int>(std::fabs(static_cast<int>(i) - m_currentLevel))
                                 * 200,
@@ -239,17 +238,19 @@ void StateMenu::doInternalUpdate(float const elapsed)
 
             if (JamTemplate::InputManager::justPressed(sf::Keyboard::Up)
                 || JamTemplate::InputManager::justPressed(sf::Keyboard::W)) {
-                m_currentLevel--;
+                int cl = m_currentLevel;
+                cl--;
                 m_inputDeadTimer = GP::MenuInputDeadTime();
 
                 float posOffset = 0;
-                if (m_currentLevel < 0) {
+                if (cl < 0) {
                     m_currentLevel = static_cast<int>(GP::getLevelList().size() - 1);
                     posOffset = m_levelNames.size() * GP::GetMenuLevelTextDistance();
+                } else {
+                    m_currentLevel = cl;
                 }
 
                 for (auto i = 0U; i != m_levelNames.size(); ++i) {
-                    auto col = GP::PaletteColor4();
                     uint8_t a = static_cast<uint8_t>(JamTemplate::MathHelper::clamp(255
                             - static_cast<int>(std::fabs(static_cast<int>(i) - m_currentLevel))
                                 * 200,
