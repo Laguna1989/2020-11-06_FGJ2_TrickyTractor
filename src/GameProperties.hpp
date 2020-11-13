@@ -35,11 +35,9 @@ public:
 
     static sf::Keyboard::Key KeyToggleDrawObjectGroups() { return sf::Keyboard::F5; };
 
-    static b2BodyDef m_bodyDef;
-
     static b2BodyDef* defaultColliderDef(const Rect& rect)
     {
-
+        static b2BodyDef m_bodyDef;
         m_bodyDef.position = JamTemplate::C::vec(rect.position);
         m_bodyDef.angle = JamTemplate::MathHelper::deg2rad(rect.rotation);
         return &m_bodyDef;
@@ -53,7 +51,7 @@ public:
     static float TractorBeamStrengthX() { return 180.0f; }
     static float MouseMovementXToBeamConversion() { return 70.0f; }
     static float TargetAirFrictionX() { return 0.992f; }
-    static float AllowedCollisionSpeed() { return 7000.0f; }
+    static float AllowedCollisionSpeed() { return 7600.0f; }
 
     static sf::Vector2f WindowSizeOutGame() { return sf::Vector2f { 720, 900 }; }
     static float Zoom() { return 3.0f; }
@@ -61,7 +59,7 @@ public:
     static int TileSizeInPixel() { return 12; }
 
     static float ScrollBoundary() { return 87.0f; }
-    static float ScrollSpeedX() { return 45.0f; }
+    static float ScrollSpeedX() { return 70.0f; }
     static float ScrollSpeedY() { return 70.0f; }
 
     static float StrongShakeDuration() { return 0.5f; }

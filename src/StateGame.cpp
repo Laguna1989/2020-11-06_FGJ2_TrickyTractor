@@ -18,6 +18,7 @@
 StateGame::StateGame(int levelID, float timer)
     : m_levelID { levelID }
     , m_timer { timer }
+    , m_startTimer { timer }
 {
 }
 
@@ -242,6 +243,9 @@ void StateGame::doInternalUpdate(float const elapsed)
         if (JamTemplate::InputManager::justReleased(GP::KeyToggleDrawObjectGroups())) {
             m_tilemap->toggleObjectGroupVisibility();
         }
+        if (JamTemplate::InputManager::justPressed(sf::Keyboard::R)) {
+            getGame()->switchState(std::make_shared<StateGame>(m_levelID - 1, m_startTimer));
+        }
 
         int32 velocityIterations = 6;
         int32 positionIterations = 2;
@@ -264,7 +268,7 @@ void StateGame::doInternalUpdate(float const elapsed)
             if (nextLevelID != GP::getLevelList().size()) {
                 getGame()->switchState(std::make_shared<StateGame>(nextLevelID, m_timer));
             } else {
-                getGame()->switchState(std::make_shared<StateMenu>(m_timer));
+                getGame()->switchState(std::make_shared<StateMenu>());
             }
         }
         m_target->setVerticalBeam(!playerIsInBlockingZone());
@@ -356,9 +360,12 @@ void StateGame::doInternalDraw() const
     for (auto z : m_blockingZones) {
         z->draw(getGame()->getRenderTarget());
     }
+
+    m_vignette->setColor(sf::Color::Black);
     m_vignette->draw(getGame()->getRenderTarget());
 
     for (auto i = 0U; i != m_target->getDamage(); ++i) {
+        m_vignette->setColor(sf::Color { 0, 0, 0, 175 });
         m_vignette->draw(getGame()->getRenderTarget());
     }
     m_overlay->draw(getGame()->getRenderTarget());
@@ -409,11 +416,9 @@ void StateGame::handleDamage(float damage)
             m_sndAlarm2.stop();
             m_sndAlarm3.play();
         }
-    } else if (damage > GP::AllowedCollisionSpeed() / 2.0f) {
+    } else if (damage > GP::AllowedCollisionSpeed() / 4.0f) {
         m_particlesBreak->Fire(10);
         m_sndCollision.play();
-        getGame()->shake(GP::WeakShakeDuration(), GP::WeakShakeIntensity());
-        m_overlay->flash(GP::WeakFlashDuration(), GP::WeakFlashColor());
     }
     m_lastCollisionAge = getAge();
 }
@@ -425,7 +430,7 @@ void StateGame::handleDeath(float const elapsed)
     // Allow for skipping the animation
     for (auto& k : JamTemplate::InputHelper::getAllKeys()) {
         if (JamTemplate::InputManager::justReleased(k)) {
-            getGame()->switchState(std::make_shared<StateMenu>());
+            getGame()->switchState(std::make_shared<StateGame>(m_levelID - 1, m_startTimer));
         }
     }
 
@@ -441,8 +446,9 @@ void StateGame::handleDeath(float const elapsed)
         m_particlesDust->kill();
         auto tw = JamTemplate::TweenAlpha<JamTemplate::SmartShape>::create(
             m_overlay, 1.75f, sf::Uint8 { 0 }, sf::Uint8 { 255 });
-        tw->addCompleteCallback(
-            [this]() { getGame()->switchState(std::make_shared<StateMenu>(0.0f)); });
+        tw->addCompleteCallback([this]() {
+            getGame()->switchState(std::make_shared<StateGame>(m_levelID - 1, m_startTimer));
+        });
         tw->setSkipFrames();
         tw->setAgePercentConversion([](float const in) { return std::pow(in, 0.25f); });
         add(tw);

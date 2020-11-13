@@ -56,6 +56,7 @@ private:
     bool m_alreadyTweening = false;
 
     float m_timer;
+    float m_startTimer;
 
     void doCreate() override;
 

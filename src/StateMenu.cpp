@@ -163,6 +163,7 @@ void StateMenu::doCreate()
     m_inputDeadTimer = 0;
 
     getGame()->m_music.openFromFile("assets/sounds/song_menu.ogg");
+    getGame()->m_music.setLoop(true);
     getGame()->m_music.play();
 }
 
