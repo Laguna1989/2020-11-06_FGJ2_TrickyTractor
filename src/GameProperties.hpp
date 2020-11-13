@@ -49,7 +49,7 @@ public:
     static float TractorBeamWidth() { return 48.0f; }
     static float TractorBeamStrengthY() { return 130.0f; }
     static float TractorBeamStrengthX() { return 180.0f; }
-    static float MouseMovementXToBeamConversion() { return 70.0f; }
+    static float MouseMovementXToBeamConversion() { return 3150.0f; }
     static float TargetAirFrictionX() { return 0.992f; }
     static float AllowedCollisionSpeed() { return 7600.0f; }
 
@@ -59,7 +59,7 @@ public:
     static int TileSizeInPixel() { return 12; }
 
     static float ScrollBoundary() { return 87.0f; }
-    static float ScrollSpeedX() { return 70.0f; }
+    static float ScrollSpeedX() { return 60.0f; }
     static float ScrollSpeedY() { return 70.0f; }
 
     static float StrongShakeDuration() { return 0.5f; }

@@ -96,7 +96,8 @@ void Target::handleInput(float const elapsed)
 {
     m_beamPosXLast = m_beamPosX;
     m_beamPosX = JamTemplate::InputManager::getMousePositionWorld().x;
-    float deltaX = m_beamPosX - m_beamPosXLast;
+    float deltaX = (m_beamPosX - m_beamPosXLast) * elapsed;
+
     // ufo tilting
     auto v = m_ufo->getRotation();
 
