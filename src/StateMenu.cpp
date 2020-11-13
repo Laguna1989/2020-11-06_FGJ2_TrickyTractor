@@ -1,5 +1,6 @@
 ﻿#include "StateMenu.hpp"
 #include "GameProperties.hpp"
+#include "HighScore.hpp"
 #include "JamTemplate/Game.hpp"
 #include "JamTemplate/InputManager.hpp"
 #include "JamTemplate/MathHelper.hpp"
@@ -11,10 +12,7 @@
 #include "JamTemplate/TweenScale.hpp"
 #include "StateGame.hpp"
 
-StateMenu::StateMenu(float lastTime)
-    : m_lastTime { lastTime }
-{
-}
+StateMenu::StateMenu() { }
 
 void StateMenu::doCreate()
 {
@@ -54,8 +52,7 @@ void StateMenu::doCreate()
     m_text_Explanation2->loadFont("assets/font.ttf");
     m_text_Explanation2->setCharacterSize(12U);
 
-    m_text_Explanation2->setText("[L]ock Mouse: ON\nLastTime:"
-        + JamTemplate::MathHelper::floatToStringWithXDigits(m_lastTime, 2));
+    m_text_Explanation2->setText("[L]ock Mouse: ON");
     m_text_Explanation2->setPosition({ wC, 200 });
     m_text_Explanation2->setColor(GP::PaletteColor5());
     m_text_Explanation2->update(0.0f);
@@ -141,10 +138,17 @@ void StateMenu::doCreate()
 
     getGame()->getRenderWindow()->setMouseCursorGrabbed(true);
 
+    std::vector<float> const scores = loadHighscores();
+
+    if (scores.size() != GP::getLevelList().size()) {
+        throw std::invalid_argument { "size of level list and highscore does not match" };
+    }
     for (auto i = 0U; i != GP::getLevelList().size(); ++i) {
         auto st = std::make_shared<SmartText>();
         st->loadFont("assets/font.ttf");
-        st->setText(GP::getLevelList().at(i).second);
+        std::string scorestring
+            = JamTemplate::MathHelper::floatToStringWithXDigits(scores.at(i), 2);
+        st->setText(scorestring + " " + GP::getLevelList().at(i).second);
         st->setCharacterSize(12U);
         st->setPosition({ wC, static_cast<float>(100 + GP::GetMenuLevelTextDistance() * i) });
         auto col = GP::PaletteColor4();
@@ -195,8 +199,7 @@ void StateMenu::doInternalUpdate(float const elapsed)
                 m_grabCursor = !m_grabCursor;
                 getGame()->getRenderWindow()->setMouseCursorGrabbed(m_grabCursor);
                 std::string const str = (m_grabCursor ? "ON" : "OFF");
-                m_text_Explanation2->setText("[L]ock Mouse: " + str + "\nLastTime: "
-                    + JamTemplate::MathHelper::floatToStringWithXDigits(m_lastTime, 2));
+                m_text_Explanation2->setText("[L]ock Mouse: " + str);
                 m_inputDeadTimer = GP::MenuInputDeadTime();
 
                 m_text_Explanation2->flash(GP::MenuInputDeadTime());
@@ -295,12 +298,12 @@ void StateMenu::doInternalDraw() const
         st->draw(getGame()->getRenderTarget());
     }
 
-    m_arrow->setPosition(sf::Vector2f { 40, 88 });
+    m_arrow->setPosition(sf::Vector2f { 20, 88 });
     m_arrow->setScale({ 1.0f, 1.0f });
     m_arrow->update(0.0f);
     m_arrow->draw(getGame()->getRenderTarget());
 
-    m_arrow->setPosition(sf::Vector2f { 40, 128 });
+    m_arrow->setPosition(sf::Vector2f { 20, 128 });
     m_arrow->setScale({ 1.0f, -1.0f });
     m_arrow->update(0.0f);
     m_arrow->draw(getGame()->getRenderTarget());

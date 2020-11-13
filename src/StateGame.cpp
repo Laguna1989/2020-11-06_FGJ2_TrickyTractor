@@ -3,6 +3,7 @@
 #include "Collision.hpp"
 #include "Game.hpp"
 #include "GameProperties.hpp"
+#include "HighScore.hpp"
 #include "Hud.hpp"
 #include "InputManager.hpp"
 #include "MathHelper.hpp"
@@ -14,6 +15,20 @@
 #include "TweenAlpha.hpp"
 #include "TweenPosition.hpp"
 #include "TweenScale.hpp"
+
+namespace {
+
+void doHighscore(int const level_id, float const time)
+{
+    auto scores = loadHighscores();
+    auto const currentScore = scores.at(level_id);
+    if (time < currentScore || currentScore == 0) {
+        scores.at(level_id) = time;
+        saveHighscores(scores);
+    }
+}
+
+} // namespace
 
 StateGame::StateGame(int levelID, float timer)
     : m_levelID { levelID }
@@ -252,7 +267,7 @@ void StateGame::doInternalUpdate(float const elapsed)
         m_world->Step(elapsed, velocityIterations, positionIterations);
 
         if (JamTemplate::InputManager::justPressed(sf::Keyboard::Escape)) {
-            getGame()->switchState(std::make_shared<StateMenu>(0.0f));
+            getGame()->switchState(std::make_shared<StateMenu>());
         }
 
         if (JamTemplate::InputManager::pressed(sf::Mouse::Left)) {
@@ -265,8 +280,11 @@ void StateGame::doInternalUpdate(float const elapsed)
         doScrolling(elapsed);
         if (JamTemplate::Collision::BoundingBoxTest(m_endZone, m_target->getTarget())) {
             unsigned int nextLevelID = m_levelID + 1U;
+
+            doHighscore(m_levelID, m_timer);
+
             if (nextLevelID != GP::getLevelList().size()) {
-                getGame()->switchState(std::make_shared<StateGame>(nextLevelID, m_timer));
+                getGame()->switchState(std::make_shared<StateGame>(nextLevelID, 0.0f));
             } else {
                 getGame()->switchState(std::make_shared<StateMenu>());
             }
