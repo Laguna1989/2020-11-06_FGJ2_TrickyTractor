@@ -71,6 +71,8 @@ private:
 
     bool playerIsInBlockingZone();
 
+    void restartLevel();
+
     sf::SoundBuffer m_sndBufAlarm1;
     sf::SoundBuffer m_sndBufAlarm2;
     sf::SoundBuffer m_sndBufAlarm3;

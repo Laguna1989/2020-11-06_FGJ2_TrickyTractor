@@ -259,7 +259,7 @@ void StateGame::doInternalUpdate(float const elapsed)
             m_tilemap->toggleObjectGroupVisibility();
         }
         if (JamTemplate::InputManager::justPressed(sf::Keyboard::R)) {
-            getGame()->switchState(std::make_shared<StateGame>(m_levelID - 1, m_startTimer));
+            restartLevel();
         }
 
         int32 velocityIterations = 6;
@@ -448,7 +448,7 @@ void StateGame::handleDeath(float const elapsed)
     // Allow for skipping the animation
     for (auto& k : JamTemplate::InputHelper::getAllKeys()) {
         if (JamTemplate::InputManager::justReleased(k)) {
-            getGame()->switchState(std::make_shared<StateGame>(m_levelID - 1, m_startTimer));
+            restartLevel();
         }
     }
 
@@ -464,9 +464,7 @@ void StateGame::handleDeath(float const elapsed)
         m_particlesDust->kill();
         auto tw = JamTemplate::TweenAlpha<JamTemplate::SmartShape>::create(
             m_overlay, 1.75f, sf::Uint8 { 0 }, sf::Uint8 { 255 });
-        tw->addCompleteCallback([this]() {
-            getGame()->switchState(std::make_shared<StateGame>(m_levelID - 1, m_startTimer));
-        });
+        tw->addCompleteCallback([this]() { restartLevel(); });
         tw->setSkipFrames();
         tw->setAgePercentConversion([](float const in) { return std::pow(in, 0.25f); });
         add(tw);
@@ -484,4 +482,9 @@ bool StateGame::playerIsInBlockingZone()
     }
     // std::cout << "NO overlap\n";
     return false;
+}
+
+void StateGame::restartLevel()
+{
+    getGame()->switchState(std::make_shared<StateGame>(m_levelID, m_startTimer));
 }
