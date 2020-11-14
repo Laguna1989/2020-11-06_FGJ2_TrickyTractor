@@ -32,7 +32,7 @@ private:
     std::shared_ptr<JamTemplate::SmartSprite> m_beamShape;
     std::shared_ptr<JamTemplate::SmartAnimation> m_ufo;
 
-    mutable std::shared_ptr<JamTemplate::SmartShape> m_beamBorderShape;
+    mutable std::shared_ptr<JamTemplate::SmartSprite> m_beamBorderShape;
     float m_beamPosX;
     float m_beamPosXLast;
     size_t m_damage { 0 };

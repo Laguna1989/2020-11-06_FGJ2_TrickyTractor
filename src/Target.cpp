@@ -39,8 +39,8 @@ void Target::doCreate()
     m_beamShape->loadSprite("assets/beam.png");
     m_beamShape->setColor(sf::Color { 255, 255, 255, 0 });
     m_beamShape->setScale(sf::Vector2f { 1.0f, GP::ScreenSizeInGame().y });
-    m_beamBorderShape = std::make_shared<JamTemplate::SmartShape>();
-    m_beamBorderShape->makeRect(sf::Vector2f { 1, GP::ScreenSizeInGame().y });
+    m_beamBorderShape = std::make_shared<JamTemplate::SmartSprite>();
+    m_beamBorderShape->loadSprite("assets/border.png");
     m_beamBorderShape->setColor(sf::Color::Transparent);
 
     m_glow = std::make_shared<JamTemplate::SmartSprite>();
@@ -153,15 +153,21 @@ void Target::doDraw() const
     m_animation->draw(getGame()->getRenderTarget());
     m_beamShape->draw(getGame()->getRenderTarget());
 
-    m_beamBorderShape->setPosition(
-        sf::Vector2f { m_beamPosX - GP::TractorBeamWidth() / 2, getGame()->getCamOffset().y });
-    m_beamBorderShape->update(0.0f);
-    m_beamBorderShape->draw(getGame()->getRenderTarget());
+    float screenY = GP::ScreenSizeInGame().y;
+    float spriteY = m_beamBorderShape->getLocalBounds().height;
+    auto count = static_cast<int>(std::ceil(screenY / spriteY));
+    for (int i = 0; i != count; ++i) {
+        m_beamBorderShape->setPosition(sf::Vector2f {
+            m_beamPosX - GP::TractorBeamWidth() / 2, getGame()->getCamOffset().y + i * spriteY });
+        m_beamBorderShape->update(0.0f);
+        m_beamBorderShape->draw(getGame()->getRenderTarget());
 
-    m_beamBorderShape->setPosition(
-        sf::Vector2f { m_beamPosX + GP::TractorBeamWidth() / 2, getGame()->getCamOffset().y });
-    m_beamBorderShape->update(0.0f);
-    m_beamBorderShape->draw(getGame()->getRenderTarget());
+        m_beamBorderShape->setPosition(sf::Vector2f {
+            m_beamPosX + GP::TractorBeamWidth() / 2, getGame()->getCamOffset().y + i * spriteY });
+        m_beamBorderShape->update(0.0f);
+        m_beamBorderShape->draw(getGame()->getRenderTarget());
+    }
+
     m_glow->draw(getGame()->getRenderTarget());
 
     m_ufo->draw(getGame()->getRenderTarget());
