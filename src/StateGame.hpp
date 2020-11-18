@@ -25,8 +25,8 @@ class StateGame : public JamTemplate::GameState {
 public:
     StateGame(int levelID, float timer = 0.0f);
 
-protected:
     std::shared_ptr<Hud> m_hud;
+    static bool m_restartMusic;
 
 private:
     std::shared_ptr<JamTemplate::SmartShape> m_background;

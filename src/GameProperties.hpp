@@ -59,7 +59,7 @@ public:
     static int TileSizeInPixel() { return 12; }
 
     static float ScrollBoundary() { return 87.0f; }
-    static float ScrollSpeedX() { return 60.0f; }
+    static float ScrollSpeedX() { return 55.0f; }
     static float ScrollSpeedY() { return 70.0f; }
 
     static float StrongShakeDuration() { return 0.5f; }

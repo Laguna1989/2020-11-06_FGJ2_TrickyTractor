@@ -16,6 +16,7 @@ StateMenu::StateMenu() { }
 
 void StateMenu::doCreate()
 {
+    StateGame::m_restartMusic = false;
     float w = static_cast<float>(getGame()->getRenderTarget()->getSize().x);
     float h = static_cast<float>(getGame()->getRenderTarget()->getSize().y);
     float wC = w / 2;

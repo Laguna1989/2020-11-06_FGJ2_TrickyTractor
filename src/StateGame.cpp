@@ -241,11 +241,14 @@ void StateGame::doCreate()
     /*m_sndAlarm2.setLoop(true);
     m_sndAlarm3.setLoop(true);*/
 
-    if (m_timer <= 0.1f) {
+    if (m_restartMusic) {
         getGame()->m_music.openFromFile("assets/sounds/song_ingame_1.ogg");
         getGame()->m_music.play();
+        m_restartMusic = false;
     }
 }
+
+bool StateGame::m_restartMusic { true };
 
 void StateGame::doCreateInternal() { }
 
